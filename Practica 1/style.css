@@ -1,0 +1,187 @@
+/*Colores de la app
+
+    Rojo primario #d50000
+    P- Light #ff5131
+    P- Dark #9b0000
+
+    Secundario Negro
+    Negro secundario #212121
+    S- Light #484848
+    S- Dark #000000
+*/
+
+*{/*Regla de reseteo*/
+    margin:0;
+    padding:0;
+}
+
+article{
+    background: linear-gradient(to bottom, #ffffff, #ff5131);
+    display: flex;
+    flex-direction: column;
+    border-color: #9b0000;
+    align-items: center;
+
+}
+button{
+    border-radius: 20px;
+    background-color: #9b0000;
+    color: black;
+    padding: 10px;
+    margin: 10px;
+    border-color: #9b0000;
+}
+a{
+    border-radius: 20px;
+    background-color: #9b0000;
+    color: black;
+    padding: 10px 30px ;
+    margin: 10px;
+    border-color: #9b0000;
+    text-decoration: none;
+}
+
+label{
+    text-align: left;
+    margin-top: 10px;
+    border-color: #9b0000;
+
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+footer{
+    background-color: #9b0000;
+}
+
+.userPhoto{
+    width: 70px;
+    height: 70px;
+}
+nav{
+    margin: 20px;
+    display: flex;  
+   justify-content: space-between;
+
+}
+.nav-right{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+.nav-left{
+    display: flex;
+    flex-direction: column;
+
+}
+ul{
+    list-style: none;
+}
+ul>li{
+    margin-top:25px;
+}
+
+.bronze>ul>li::before{
+    content: "\2022";
+    color: sienna;
+    margin: 5px;
+}
+.bronze>div{
+    background-color: rgb(161, 113, 91);
+    border-color: sienna;
+    border-radius: 5px;
+    text-align: center;
+    padding: 10px;
+
+}
+.silver>ul>li::before{
+    content: "\2022";
+    color: rgb(90, 84, 82);
+    margin: 5px;
+}
+.silver>div{
+    background-color:  rgb(177, 168, 165);
+    border-color:  rgb(90, 84, 82);
+    border-radius: 5px;
+    text-align: center;
+    padding: 10px;
+   
+
+}
+.gold>ul>li::before{
+    content: "\2022";
+    color: rgb(228, 179, 46);
+    margin: 5px;
+
+}
+.gold>div{
+    background-color:  rgb(226, 205, 148);
+    border-color:  rgb(228, 179, 46);
+    border-radius: 5px;
+    text-align: center;
+    padding: 10px;
+
+}
+.medal-descript{
+    background-color: rgb(68, 66, 66);
+    padding: 7px;
+    border-radius: 5px;
+
+}
+.number{
+    font-weight: bold;
+    font-size: larger;
+    text-align: center;
+}
+.medal-types{
+    display: flex;
+    width: 100%;
+    justify-content: center;
+
+
+}
+.medal-types>div{
+    margin: 10px;
+}
+.user-title{
+    border-radius: 5px;
+    background-color: #9b0000;
+    color: black;
+    padding: 5px;
+    margin: 10px;
+    border-color: #9b0000;
+    text-align: center;
+}
+.data{
+    display:flex;
+    flex-direction: column;
+}
+.up{
+    text-align: center;
+
+}
+.down{
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.user-account{
+    display:flex;
+    justify-content: flex-start;
+
+}
+.user-data{
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stats, .medals{
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+}
