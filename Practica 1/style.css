@@ -24,8 +24,6 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    font-family: 'Poppins', sans-serif;
-
 }
 button{
     border-radius: 20px;
@@ -57,6 +55,7 @@ form {
 }
 
 footer{
+    margin-top: 30px;
     padding: 20px;
     background-color: #9b0000;
     color: white
@@ -93,8 +92,12 @@ nav{
     height: 95px;
     margin-left: 10px; 
 }
-nav ul{
+
+ul {
     list-style: none;
+}
+
+nav ul{
     display: flex;
 }
 ul>li{
@@ -112,7 +115,7 @@ ul>li{
     border-radius: 5px;
     text-align: center;
     padding: 10px;
-
+    box-shadow: 10px 10px 16px -8px rgba(0,0,0,0.75);
 }
 .silver>ul>li::before{
     content: "\2022";
@@ -125,8 +128,7 @@ ul>li{
     border-radius: 5px;
     text-align: center;
     padding: 10px;
-   
-
+    box-shadow: 10px 10px 16px -8px rgba(0,0,0,0.75);
 }
 .gold>ul>li::before{
     content: "\2022";
@@ -140,14 +142,18 @@ ul>li{
     border-radius: 5px;
     text-align: center;
     padding: 10px;
-
+    box-shadow: 10px 10px 16px -8px rgba(0,0,0,0.75);
 }
 .medal-descript{
-    background-color: rgb(68, 66, 66);
+    background-color:black;
     padding: 7px;
     border-radius: 5px;
+    color: white;
+    box-shadow: 10px 10px 16px -8px rgba(0,0,0,0.75);
+
 
 }
+
 .number{
     font-weight: bold;
     font-size: larger;
@@ -169,8 +175,9 @@ ul>li{
     color: black;
     padding: 5px;
     margin: 10px;
-    border-color: #9b0000;
     text-align: center;
+    color: white;
+    box-shadow: 10px 10px 16px -8px rgba(0,0,0,0.75);
 }
 .data{
     display:flex;
@@ -194,6 +201,12 @@ ul>li{
     display:flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    margin-top: 50px;
+    border: 2px solid black;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 10px 10px 16px -8px rgba(0,0,0,0.75);
 }
 
 .stats, .medals{
@@ -208,10 +221,6 @@ ul>li{
     border-radius: 7px;
     background-color: #e23737;
 }
-.no-topic{
-    padding: 14px;
-
-}
 
 .users-group{
     display:flex;
@@ -221,9 +230,15 @@ ul>li{
 }
 
 .search {
-    margin-top: 50px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 50px 0;
 }
 
+.search input[type="submit"] {
+    margin-left:15px;
+}
 .search-icon {
     height: 25px;
     width: 25px;
@@ -231,6 +246,7 @@ ul>li{
     border-radius: 20px;
     padding: 7px;
     box-shadow: 10px 10px 16px -8px rgba(0,0,0,0.75);
+    margin-right: 15px;
 }
 
 .search-box {
@@ -245,7 +261,6 @@ ul>li{
 input[type="text"] {
     border-radius: 20px;
     flex-grow: 1;
-    margin: 0 15px;
     border: solid 1px black;
     box-shadow: 10px 10px 16px -8px rgba(0,0,0,0.75);
     padding: 5px 5px 5px 20px;
@@ -271,15 +286,9 @@ article{
     margin: 0 7.5%;
 }
 
-.search {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-}
-
 h2{
-    margin: 30px 0;
     text-align: center;
+    margin-bottom: 10px;
 }
 
 .make-question {
@@ -311,7 +320,7 @@ ul {
     background-color: #9b0000;
     border-radius: 30px;
     padding: 8px;
-    margin-right: 10px;
+    /*Añadir un margin right pero en la búsqueda solo */
     color: white;
     font-size: small;
 }
@@ -379,7 +388,7 @@ ul {
 textarea {
     box-shadow: 10px 10px 16px -8px rgba(0,0,0,0.75);
     border-radius: 20px;
-    border: 2px solid black;
+    border: 1px solid black;
     padding: 20px;
     height: 100px;
     font-family: 'Catamaran', sans-serif!important;
@@ -391,4 +400,8 @@ textarea {
 
 .form-answer {
     margin: 30px 0;
+}
+
+h3 {
+    margin-top: 20px;
 }

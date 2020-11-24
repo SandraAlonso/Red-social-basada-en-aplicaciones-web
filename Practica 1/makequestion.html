@@ -5,40 +5,60 @@
     <title>Make question</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Catamaran&display=swap" rel="stylesheet">
     <link rel="icon" type="img/png" href="./resources/favicon.png">
 </head>
 
+
 <body>
-    <header>
+
+<header>
         <nav>
-            <img src="./resources/logo.png" alt="logo de 404">
-            <ul>
-                <li>
-                    <a href="questions.html">Preguntas</a>
-                </li>
-                <li>
-                    <a href="notAnswer.html">Sin responder</a>
-                </li>
-                <li>
-                    <a href="users.html">Usuarios</a>
-                </li>
-            </ul>
-            <div>
-                <img src="./resources/profile.png" alt="imagen de perfil">
-                <span>Nombre de usuarios</span>
+            <div class="nav-left">
+                <img src="./resources/logo.png" alt="logo de 404">
+
+                <ul>
+                    <li>
+                        <a class="nav-button" href="questions.html">Preguntas</a>
+                    </li>
+                    <li>
+                        <a class="nav-button" href="notAnswer.html">Sin responder</a>
+                    </li>
+                    <li>
+                        <a class="nav-button" href="users.html">Usuarios</a>
+                    </li>
+                </ul>
+
+            </div>
+            <div class="nav-right">
+                <img class="userPhoto" src="./resources/profile.png" alt="imagen de perfil">
+                <span>Paco</span>
                 <a href="login.html">Cerrar sesión</a>
             </div>
         </nav>
-    </header>
-    <article>
-        <h1>Formular una pregunta</h1>
+</header>
+
+<article>
+
+    <form class="search">
+        <div class="search-box">
+            <img class="search-icon" src="./resources/busqueda.png">
+            <input class="search-input" type="text" placeholder="Bucar por título/cuerpo de pregunta">
+        </div>
+        <input type="submit" value="Buscar">
+    </form>
+
+        <h2>Formular una pregunta</h2>
         <form>
-            <h2>Título</h2>
+            <h3>Título</h3>
             <p>Se específico e imagina que estas haciendo una pregunta a otra persona</p>
-            <h2>Cuerpo</h2>
+            <input type="text">
+            <h3>Cuerpo</h3>
             <p>Incluye toda la información qye alguien necesitaría para responder tu pregunta</p>
-            <h2>Etiqueta</h2>
+            <textarea></textarea>
+            <h3>Etiqueta</h3>
             <p>Añade hasta 5 etiquetas para describir sobre qué trata tu pregunta</p>
+            <input type="text">
         </form>
     </article>
     <footer>
