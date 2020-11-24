@@ -15,10 +15,11 @@
     padding:0;
 }
 
-body{
-        background: linear-gradient(to bottom, #ffffff, #ff5131);
-
+body {
+   /*background: linear-gradient(to bottom, #ffffff, #ff5131);*/
+   font-family: 'Catamaran', sans-serif;
 }
+
 .todo{
     display: flex;
     flex-direction: column;
@@ -36,11 +37,10 @@ button{
 }
 a{
     border-radius: 20px;
-    background-color: #9b0000;
-    color: black;
-    padding: 10px 30px ;
+    background-color: black;
+    color: white;
+    padding: 10px 30px;
     margin: 10px;
-    border-color: #9b0000;
     text-decoration: none;
 }
 
@@ -54,11 +54,12 @@ label{
 form {
     display: flex;
     flex-direction: column;
-    align-items: center;
 }
 
 footer{
+    padding: 20px;
     background-color: #9b0000;
+    color: white
 }
 
 .userPhoto{
@@ -66,24 +67,35 @@ footer{
     height: 70px;
 }
 nav{
-    margin: 20px;
-    display: flex;  
+    padding: 20px 20px 0px 20px ;
+   display: flex;  
    justify-content: space-between;
-
+   background: #9b0000;
+   box-shadow: 0px -2px 16px 8px rgba(143,143,143,1);
 }
 .nav-right{
     display: flex;
     flex-direction: column;
     align-items: center;
+}
 
+.nav-right span {
+    color: white;
+    margin: 8px 0;
 }
 .nav-left{
     display: flex;
     flex-direction: column;
-
 }
-ul{
+
+.nav-left img {
+    width: 220px;
+    height: 95px;
+    margin-left: 10px; 
+}
+nav ul{
     list-style: none;
+    display: flex;
 }
 ul>li{
     margin-top:25px;
@@ -182,14 +194,6 @@ ul>li{
     display:flex;
     flex-direction: column;
     align-items: center;
-    margin: 10px;
-    border:solid 2px #9b0000;
-    padding: 30px;
-    border-radius:20px ;
-}
-
-.user-data>span{
-    margin-top:5px;
 }
 
 .stats, .medals{
@@ -198,24 +202,6 @@ ul>li{
     width: 50%;
 }
 
-.form-search{
-    margin-left: 35px;
-    margin-bottom: 20px;
-}
-
-.users-group{
-    display:flex;
-    align-items: flex-start;
-    justify-content: center;
-    margin-top: 2px;
-}
-
-h2{
-    text-align: center;
-    font-weight: bold;
-
-    margin-bottom: 20px;
-}
 .topic{
     border:solid 2px #9b0000;
     padding: 3px;
@@ -225,4 +211,184 @@ h2{
 .no-topic{
     padding: 14px;
 
+}
+
+.users-group{
+    display:flex;
+    align-items: flex-start;
+    justify-content: center;
+    margin-top: 2px;
+}
+
+.search {
+    margin-top: 50px;
+}
+
+.search-icon {
+    height: 25px;
+    width: 25px;
+    background-color: #9b0000;
+    border-radius: 20px;
+    padding: 7px;
+    box-shadow: 10px 10px 16px -8px rgba(0,0,0,0.75);
+}
+
+.search-box {
+    display: flex;
+    flex-grow: 1;
+}
+
+.search-input {
+    height: 25px;
+}
+
+input[type="text"] {
+    border-radius: 20px;
+    flex-grow: 1;
+    margin: 0 15px;
+    border: solid 1px black;
+    box-shadow: 10px 10px 16px -8px rgba(0,0,0,0.75);
+    padding: 5px 5px 5px 20px;
+    font-family: 'Catamaran', sans-serif!important;
+    outline:none;
+}
+
+input[type=submit] {
+    border-radius: 20px;
+    background-color: #9b0000;
+    color: black;
+    padding: 7px 30px ;
+    border-color: #9b0000;
+    text-decoration: none;
+    border: none;
+    color:white;
+    box-shadow: 10px 10px 16px -8px rgba(0,0,0,0.75);
+    font-family: 'Catamaran', sans-serif!important;
+    outline:none;
+} 
+
+article{
+    margin: 0 7.5%;
+}
+
+.search {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+h2{
+    margin: 30px 0;
+    text-align: center;
+}
+
+.make-question {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+a{
+    margin: 0px 0px 0px 10px!important;
+    box-shadow: 10px 10px 16px -8px rgba(0,0,0,0.75);
+}
+
+ul {
+    /*margin: 0 5%;*/    
+    margin-bottom: 50px;
+}
+
+.card {
+    box-shadow: 10px 10px 16px -8px rgba(0,0,0,0.75);
+    border-radius: 20px;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    border: 2px solid black;
+}
+
+.tag {
+    background-color: #9b0000;
+    border-radius: 30px;
+    padding: 8px;
+    margin-right: 10px;
+    color: white;
+    font-size: small;
+}
+
+.tag-container {
+    margin-top: 20px;
+}
+
+.card-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.card-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    border-left: 1px solid grey;
+    padding-left: 15px;
+}
+
+.card img {
+    height: 50px;
+    width: 50px;
+}
+
+.like-icon {
+    border-radius: 25px;
+    margin-left: 5px;
+    padding: 5px;
+    height: 30px;
+    width: 30px;
+}
+
+.views {
+    box-shadow: 10px 10px 16px -8px rgba(0,0,0,0.75);
+    background-color: white;
+    border-radius: 10px;
+    padding: 5px;
+    border: 2px solid black;
+}
+
+.vote-container {
+    box-shadow: 10px 10px 16px -8px rgba(0,0,0,0.75);
+    border: 2px solid black;
+    display: flex;
+    margin: 20px 0;
+    border-radius: 10px;
+    padding: 10px 20px;
+    align-items: center;
+}
+
+.invested {
+    transform: scaleX(-1);
+    transform: rotate(-180deg);
+}
+
+.number-answers {
+    margin-top: 30px;
+    margin-left: 5px;
+}
+
+textarea {
+    box-shadow: 10px 10px 16px -8px rgba(0,0,0,0.75);
+    border-radius: 20px;
+    border: 2px solid black;
+    padding: 20px;
+    height: 100px;
+    font-family: 'Catamaran', sans-serif!important;
+    resize: none;
+    overflow: hidden;
+    margin-bottom: 20px;
+    outline:none;
+}
+
+.form-answer {
+    margin: 30px 0;
 }

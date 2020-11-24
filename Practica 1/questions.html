@@ -4,80 +4,85 @@
 <head>
     <title>404</title>
     <meta charset="utf-8" />
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="img/png" href="imagen.jpg">
+    <link rel="stylesheet" href="style.css">    
+    <link href="https://fonts.googleapis.com/css2?family=Catamaran&display=swap" rel="stylesheet">
+    <link rel="icon" type="img/png" href="./resources/favicon.png">
 </head>
 
 
 <body>
 
 <header>
-    <nav>
-        <img src="./resources/logo.png" alt="logo de 404">
-        <ul>
-            <li>
-                <a href="questions.html">Preguntas</a>
-            </li>
-            <li>
-                <a href="notAnswer.html">Sin responder</a>
-            </li>
-            <li>
-                <a href="users.html">Usuarios</a>
-            </li>
-        </ul>
-        <div>
-            <img src="./resources/profile.png" alt="imagen de perfil">
-            <span>Nombre de usuarios</span>
-            <a href="login.html">Cerrar sesión</a>
-        </div>
-    </nav>
+        <nav>
+            <div class="nav-left">
+                <img src="./resources/logo.png" alt="logo de 404">
+
+                <ul>
+                    <li>
+                        <a class="nav-button" href="questions.html">Preguntas</a>
+                    </li>
+                    <li>
+                        <a class="nav-button" href="notAnswer.html">Sin responder</a>
+                    </li>
+                    <li>
+                        <a class="nav-button" href="users.html">Usuarios</a>
+                    </li>
+                </ul>
+
+            </div>
+            <div class="nav-right">
+                <img class="userPhoto" src="./resources/profile.png" alt="imagen de perfil">
+                <span>Paco</span>
+                <a href="login.html">Cerrar sesión</a>
+            </div>
+        </nav>
 </header>
 
 <article>
 
-    <form>
-        <div>
-            <img src="./resources/busqueda.png">
-            <input type="text" placeholder="Bucar por título/cuerpo de pregunta">
+    <form class="search">
+        <div class="search-box">
+            <img class="search-icon" src="./resources/busqueda.png">
+            <input class="search-input" type="text" placeholder="Bucar por título/cuerpo de pregunta">
         </div>
-            <input type="submit" value="Buscar">
+        <input type="submit" value="Buscar">
     </form>
 
     <h2>Todas las preguntas</h2>
 
-    <div>
+    <div class="make-question">
         <p>X preguntas</p>
         <a href="makeQuestion.html">Formular una pregunta</a>
     </div>
 
     <div>
         <ul>
-            <li>
-                <div>
+            <li class="card">
+                <div class="card-left">
                     <h3>Ejemplo de pregunta</h3>
                     <p>Descripcion</p>
-                    <div>
-                        <span>Etiqueta</span>
-                        <span>Etiqueta</span>
+                    <div class="tag-container">
+                        <span class="tag">Etiqueta</span>
+                        <span class="tag">Etiqueta</span>
                     </div>
                 </div>
-                <div>
+                <div class="card-right">
                     <p>Formulada el 6/6/6666</p>
                     <img src="./resources/profile.png">
                     <span>Nombre</span>
                 </div>
             </li>
 
-            <li>
-                <div>
+            <li class="card">
+                <div class="card-left">
                     <h3>Ejemplo de pregunta</h3>
                     <p>Descripcion</p>
-                    <div>
-                        <span>Etiqueta</span>
-                        <span>Etiqueta</span>
+                    <div class="tag-container">
+                        <span class="tag">Etiqueta</span>
+                        <span class="tag">Etiqueta</span>
                     </div>
                 </div>
-                <div>
+                <div class="card-right">
                     <p>Formulada el 6/6/6666</p>
                     <img src="./resources/profile.png">
                     <span>Nombre</span>
