@@ -33,14 +33,7 @@ button{
     margin: 10px;
     border-color: #9b0000;
 }
-a{
-    border-radius: 20px;
-    background-color: black;
-    color: white;
-    padding: 10px 30px;
-    margin: 10px;
-    text-decoration: none;
-}
+
 
 label{
     text-align: left;
@@ -66,7 +59,7 @@ footer{
     height: 70px;
 }
 nav{
-    padding: 20px 20px 0px 20px ;
+    padding: 20px ;
    display: flex;  
    justify-content: space-between;
    background: #9b0000;
@@ -99,6 +92,7 @@ ul {
 
 nav ul{
     display: flex;
+    flex-wrap: wrap;
 }
 ul>li{
     margin-top:25px;
@@ -224,7 +218,7 @@ ul>li{
 
 .users-group{
     display:flex;
-    align-items: stretch;
+    flex-wrap: wrap;
     justify-content: center;
 }
 
@@ -257,7 +251,7 @@ ul>li{
     height: 25px;
 }
 
-input[type="text"] {
+input[type="text"], input[type="email"], input[type="password"] {
     border-radius: 20px;
     flex-grow: 1;
     border: solid 1px black;
@@ -270,15 +264,14 @@ input[type="text"] {
 input[type=submit] {
     border-radius: 20px;
     background-color: #9b0000;
-    color: black;
     padding: 7px 30px ;
-    border-color: #9b0000;
     text-decoration: none;
     border: none;
     color:white;
     box-shadow: 10px 10px 16px -8px rgba(0,0,0,0.75);
     font-family: 'Catamaran', sans-serif!important;
     outline:none;
+    font-size: 14px;
 } 
 
 article{
@@ -295,17 +288,17 @@ h2{
     align-items: center;
     justify-content: flex-end;
 }
-
 a{
-    margin: 0px 0px 0px 10px!important;
     box-shadow: 10px 10px 16px -8px rgba(0,0,0,0.75);
+    border-radius: 20px;
+    background-color: black;
+    color: white;
+    padding: 7px 30px;
+    text-decoration: none;
+    margin-left: 10px;
+    font-size: 14px;
+    text-align: center;
 }
-
-ul {
-    /*margin: 0 5%;*/    
-    margin-bottom: 50px;
-}
-
 .card {
     box-shadow: 10px 10px 16px -8px rgba(0,0,0,0.75);
     border-radius: 20px;
@@ -403,4 +396,12 @@ textarea {
 
 h3 {
     margin-top: 20px;
+}
+.login-buttons {
+    margin-top: 30px;
+    display: flex;
+    justify-content: space-around;
+}
+.account-title {
+    margin-top: 30px;
 }
