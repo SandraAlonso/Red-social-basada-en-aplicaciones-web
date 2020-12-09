@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 02-12-2020 a las 18:56:04
+-- Tiempo de generación: 09-12-2020 a las 18:18:14
 -- Versión del servidor: 10.4.14-MariaDB
 -- Versión de PHP: 7.2.34
 
@@ -92,12 +92,24 @@ CREATE TABLE `visit` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `vote`
+-- Estructura de tabla para la tabla `voteanwer`
 --
 
-CREATE TABLE `vote` (
+CREATE TABLE `voteanwer` (
   `idUser` int(11) NOT NULL,
-  `idQuestionAnswer` int(11) NOT NULL,
+  `idAnswer` int(11) NOT NULL,
+  `Type` tinyint(4) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `votequestion`
+--
+
+CREATE TABLE `votequestion` (
+  `idUser` int(11) NOT NULL,
+  `idQuestion` int(11) NOT NULL,
   `type` tinyint(4) NOT NULL COMMENT '1 es voto negativo y 0 voto positivo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -130,10 +142,10 @@ ALTER TABLE `visit`
   ADD PRIMARY KEY (`idUser`,`idQuestion`);
 
 --
--- Indices de la tabla `vote`
+-- Indices de la tabla `votequestion`
 --
-ALTER TABLE `vote`
-  ADD PRIMARY KEY (`idUser`,`idQuestionAnswer`);
+ALTER TABLE `votequestion`
+  ADD PRIMARY KEY (`idUser`,`idQuestion`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
