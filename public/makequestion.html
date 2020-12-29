@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <title>Make question</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="./css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Catamaran&display=swap" rel="stylesheet">
+    <link rel="icon" type="img/png" href="./img/favicon.png">
+</head>
+
+
+<body>
+
+<header>
+        <nav>
+            <div class="nav-left">
+                <img src="./img/logo.png" alt="logo de 404">
+
+                <ul>
+                    <li>
+                        <a class="nav-button" href="questions.html">Preguntas</a>
+                    </li>
+                    <li>
+                        <a class="nav-button" href="notAnswer.html">Sin responder</a>
+                    </li>
+                    <li>
+                        <a class="nav-button" href="users">Usuarios</a>
+                    </li>
+                </ul>
+
+            </div>
+            <div class="nav-right">
+                <img class="userPhoto" src="./img/profile.png" alt="imagen de perfil">
+                <span>Paco</span>
+                <a href="/logout">Cerrar sesión</a>
+            </div>
+        </nav>
+</header>
+
+<article>
+
+    <form class="search">
+        <div class="search-box">
+            <img class="search-icon" src="./img/busqueda.png">
+            <input class="search-input" type="text" placeholder="Bucar por título/cuerpo de pregunta">
+        </div>
+        <input type="submit" value="Buscar">
+    </form>
+
+        <h2>Formular una pregunta</h2>
+        <form>
+            <h3>Título</h3>
+            <p>Se específico e imagina que estas haciendo una pregunta a otra persona</p>
+            <input type="text">
+            <h3>Cuerpo</h3>
+            <p>Incluye toda la información qye alguien necesitaría para responder tu pregunta</p>
+            <textarea></textarea>
+            <h3>Etiqueta</h3>
+            <p>Añade hasta 5 etiquetas para describir sobre qué trata tu pregunta</p>
+            <input type="text">
+        </form>
+    </article>
+    <footer>
+        <span>Hecho con amor por Sandra Alonso y Héctor Arranz</span>
+    </footer>
+</body>
+
+</html>
