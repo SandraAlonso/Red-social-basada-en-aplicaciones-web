@@ -97,8 +97,6 @@ class DAOUsers {
                             }
                             else {
                                 var resultArray = Object.values(JSON.parse(JSON.stringify(rows)))
-                                console.log(resultArray);
-
                                 callback(null, resultArray);
                             }
                         }
@@ -134,39 +132,7 @@ class DAOUsers {
         });
     }
 
-    getScoreForUser(id, callback) {
-        this.pool.getConnection(function (err, connection) {
-            if (err) {
-                callback(new Error("Error de conexión a la base de datos"));
-            }
-            else {
-                connection.query("SELECT likes, dislikes FROM quetion WHERE idUser = ?",
-                    [id],
-                    function (err, rows) {
-                        if (err) {
-                            callback(new Error("Error de acceso a la base de datos"));
-                        }
-                        else {
-                            if (rows.length === 0) {
-                                callback(new Error("No existe el usuarios en la base de datos")); //no está el usuario con el password proporcionado
-                            }
-                            else {
-                                var suma;
-                                console.log(rows);
-                                for (let i of rows) {
-                                    console.log(i);
-                                    suma += (i.likes * 10 - i.dislikes * 2);
-                                }
-                                console.log(suma);
-                                var resultArray = Object.values(JSON.parse(JSON.stringify(rows)))
-                                callback(null, resultArray);
-
-                            }
-                        }
-                    });
-            }
-        });
-    }
+   
 
     getAllUsers(id, callback) {
         this.pool.getConnection(function (err, connection) {
@@ -186,7 +152,6 @@ class DAOUsers {
                             var tags = [];
                             var contTags = [];
                             var resultArray = Object.values(JSON.parse(JSON.stringify(rows)))
-                            console.log(resultArray);
                             var score = 1;
                             if (resultArray.resultArray != 0) {
                                 var suma = 0;
@@ -236,13 +201,13 @@ class DAOUsers {
     }
 
 
-    getMoreAboutUser(id, callback) {
+    getQAFromUser(id, callback) {
         this.pool.getConnection(function (err, connection) {
             if (err) {
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                connection.query("SELECT COUNT(*) FROM question q WHERE q.id = ?",
+                connection.query("SELECT COUNT(*) AS quest FROM question q WHERE q.idUser = ?",
                     [id],
                     function (err, rows) {
                         connection.release(); // devolver al pool la conexión
@@ -250,13 +215,31 @@ class DAOUsers {
                             callback(new Error("Error de acceso a la base de datos"));
                         }
                         else {
-                            console.log(rows);
                             if (rows.length === 0) {
                                 callback(new Error("No existe el usuario en la base de datos")); //no está el usuario con el password proporcionado
                             }
                             else {
-                                var resultArray = Object.values(JSON.parse(JSON.stringify(rows)))
-                                callback(null, resultArray[0].substring(11));
+
+                                const sql = "SELECT COUNT(*) AS ans FROM answer a WHERE a.idUser = ?";
+                                connection.query(sql, [id],
+                                    function (err, rows2) {
+                                        if (err) {
+                                            callback(new Error("Error en el conteo de respuestas"));
+                                        }
+                                        else {
+                                            var questions = Object.values(JSON.parse(JSON.stringify(rows)))
+                                            var answers = Object.values(JSON.parse(JSON.stringify(rows2)))
+                                            var o = new Object();
+                                            o.q = questions;
+                                            o.a= answers;
+                                            callback(null, o);
+                                        }
+                                    }
+                                );
+
+
+
+
                             }
                         }
                     });
@@ -264,17 +247,29 @@ class DAOUsers {
         }
         );
     }
-    /* const sql = "INSERT INTO user(email, name, password, img) VALUES (?,?,?,?)";
-                                        connection.query(sql, [email, name, password, file],
-                                            function (err, rows) {
-                                                if (err) {
-                                                    callback(new Error("Error en la insercción en la base de datos"));
-                                                }
-                                                else {
-                                                    callback(null, true);
-                                                }
-                                            }
-                                        );*/
+    getUserScore(id, callback) {
+        this.pool.getConnection(function (err, connection) {
+            if (err) {
+                callback(new Error("Error de conexión a la base de datos1"));
+            }
+            else {
+                connection.query("SELECT q.id, SUM(q.likes) AS likes, SUM(q.dislikes) AS dislikes FROM question q WHERE q.idUser = ? ",
+                    [id],
+                    function (err, rows) {
+                        if (err) {
+                            callback(new Error("Error de acceso a la base de dato2s"));
+                        }
+                        else {
+                                var score = Object.values(JSON.parse(JSON.stringify(rows)))
+                                let suma = 10*score[0].likes -2*score[0].dislikes
+                                callback(null, suma);
+
+                            }
+
+                        });
+            }
+        });
+    }
 }
 
 module.exports = DAOUsers;
