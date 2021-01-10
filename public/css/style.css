@@ -219,9 +219,9 @@ ul>li{
 }
 
 .users-group{
-    display:flex;
     flex-wrap: wrap;
     justify-content: center;
+    display : flex
 }
 
 .search {
@@ -252,6 +252,7 @@ ul>li{
 .search-input {
     height: 25px;
 }
+
 
 input[type="text"], input[type="email"], input[type="password"] {
     border-radius: 20px;
@@ -411,3 +412,12 @@ textarea {
     text-align: center;
     font-weight: bold;
   }
+
+.nombreUsuario{
+    color: black;
+    margin-top: 10px;
+    text-align: center;
+    font-weight: bold;
+    background-color: #9b0000;
+    box-shadow: none;
+}

@@ -78,14 +78,14 @@ class DAOUsers {
         );
     }
 
-    getUser(email, callback){
+    getUser(id, callback) {
         this.pool.getConnection(function (err, connection) {
             if (err) {
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                connection.query("SELECT id, email, name, img, SignUpDate FROM user WHERE email = ?",
-                    [email],
+                connection.query("SELECT email, name, img, SignUpDate FROM user WHERE id = ?",
+                    [id],
                     function (err, rows) {
                         connection.release(); // devolver al pool la conexión
                         if (err) {
@@ -97,6 +97,8 @@ class DAOUsers {
                             }
                             else {
                                 var resultArray = Object.values(JSON.parse(JSON.stringify(rows)))
+                                console.log(resultArray);
+
                                 callback(null, resultArray);
                             }
                         }
@@ -106,7 +108,7 @@ class DAOUsers {
         );
     }
 
-    getUserImageName(id, callback) {  
+    getUserImageName(id, callback) {
         this.pool.getConnection(function (err, connection) {
             if (err) {
                 callback(new Error("Error de conexión a la base de datos"));
@@ -128,8 +130,151 @@ class DAOUsers {
                             }
                         }
                     });
-                }
-            });
-     }
+            }
+        });
+    }
+
+    getScoreForUser(id, callback) {
+        this.pool.getConnection(function (err, connection) {
+            if (err) {
+                callback(new Error("Error de conexión a la base de datos"));
+            }
+            else {
+                connection.query("SELECT likes, dislikes FROM quetion WHERE idUser = ?",
+                    [id],
+                    function (err, rows) {
+                        if (err) {
+                            callback(new Error("Error de acceso a la base de datos"));
+                        }
+                        else {
+                            if (rows.length === 0) {
+                                callback(new Error("No existe el usuarios en la base de datos")); //no está el usuario con el password proporcionado
+                            }
+                            else {
+                                var suma;
+                                console.log(rows);
+                                for (let i of rows) {
+                                    console.log(i);
+                                    suma += (i.likes * 10 - i.dislikes * 2);
+                                }
+                                console.log(suma);
+                                var resultArray = Object.values(JSON.parse(JSON.stringify(rows)))
+                                callback(null, resultArray);
+
+                            }
+                        }
+                    });
+            }
+        });
+    }
+
+    getAllUsers(id, callback) {
+        this.pool.getConnection(function (err, connection) {
+            if (err) {
+                callback(new Error("Error de conexión a la base de datos1"));
+            }
+            else {
+                connection.query("SELECT u.name, u.img, q.likes, q.dislikes, t.tag FROM user u LEFT JOIN question q ON q.idUser = u.id LEFT JOIN tags t ON t.idQuestion = q.id WHERE u.id != ? ORDER BY u.name ASC",
+
+                    [id],
+                    function (err, rows) {
+                        if (err) {
+                            callback(new Error("Error de acceso a la base de dato2s"));
+                        }
+                        else {
+                            var result = [];
+                            var tags = [];
+                            var contTags = [];
+                            var resultArray = Object.values(JSON.parse(JSON.stringify(rows)))
+                            console.log(resultArray);
+                            var score = 1;
+                            if (resultArray.resultArray != 0) {
+                                var suma = 0;
+                                var ant = resultArray[0];
+                                for (let i of resultArray) {
+                                    if (i.name != ant.name) {
+                                        //Calculo de puntuacion
+                                        if (suma == 0)
+                                            suma = 1;
+                                        ant.puntuacion = suma;
+                                        delete ant.likes;
+                                        delete ant.dislikes;
+                                        suma = 0;
+
+                                        //Calculo de tag mas usado
+                                        var max = 0;
+                                        var index = 0;
+                                        for (let j of contTags) {
+                                            if (j > max) {
+                                                max = j.cont;
+                                                index = contTags.indexOf(max);
+                                            }
+                                        }
+                                        ant.tag = tags[index];
+                                        tags = [];
+                                        result.push(ant);
+                                    }
+                                    var index = tags.indexOf(i.tag);
+                                    if (index == -1) {//nueva tag
+                                        tags.push(i.tag);
+                                        contTags[tags.length - 1]++;
+                                    }
+                                    else {
+                                        contTags[index]++;
+                                    }
+                                    suma += (i.likes * 10 - i.dislikes * 2);
+                                    ant = i;
+                                }
+                                callback(null, result);
+
+                            }
+
+                        }
+                    });
+            }
+        });
+    }
+
+
+    getMoreAboutUser(id, callback) {
+        this.pool.getConnection(function (err, connection) {
+            if (err) {
+                callback(new Error("Error de conexión a la base de datos"));
+            }
+            else {
+                connection.query("SELECT COUNT(*) FROM question q WHERE q.id = ?",
+                    [id],
+                    function (err, rows) {
+                        connection.release(); // devolver al pool la conexión
+                        if (err) {
+                            callback(new Error("Error de acceso a la base de datos"));
+                        }
+                        else {
+                            console.log(rows);
+                            if (rows.length === 0) {
+                                callback(new Error("No existe el usuario en la base de datos")); //no está el usuario con el password proporcionado
+                            }
+                            else {
+                                var resultArray = Object.values(JSON.parse(JSON.stringify(rows)))
+                                callback(null, resultArray[0].substring(11));
+                            }
+                        }
+                    });
+            }
+        }
+        );
+    }
+    /* const sql = "INSERT INTO user(email, name, password, img) VALUES (?,?,?,?)";
+                                        connection.query(sql, [email, name, password, file],
+                                            function (err, rows) {
+                                                if (err) {
+                                                    callback(new Error("Error en la insercción en la base de datos"));
+                                                }
+                                                else {
+                                                    callback(null, true);
+                                                }
+                                            }
+                                        );*/
 }
+
 module.exports = DAOUsers;

@@ -166,16 +166,25 @@ app.post("/create-user", upload.single('file'), function (request, response) {
 });
 
 app.get("/users", function(request, response){
-    daoUser.getUser("sanalo05@ucm.es", function(err, result){
+    daoUser.getUser(request.session.currentUser, function(err, result){
         if (err) {
             response.render("users", { errorMsg: err.message });
         }
         else {
-            response.render("users", { errorMsg: null, name: result[0].name, email: result[0].name, img:result[0].img, sud: result[0].SignUpDate.substring(0,10)});
-        }
-    })
+            daoUser.getMoreAboutUser(request.session.currentUser, function(err, result2){
+                if (err) {
+                    response.render("users", { errorMsg: err.message });
+                }
+                else{
+                    console.log(result2);
+                response.render("users", { errorMsg: null, name: result[0].name, email: result[0].name, img:result[0].img, sud: result[0].SignUpDate.substring(0,10)});
+            }
+            }
+            )
+    }})
 });
 
+//Manejador para imagen de usuario
 app.get('/imagenUsuario', accesscontrol);
 app.get('/imagenUsuario', function(request, response) {
         daoUser.getUserImageName(request.session.currentUser, function(error, value) {
@@ -238,3 +247,15 @@ app.post('/make-question', function(request, response) {
             }
         });
 })
+
+app.get('/user-search', accesscontrol);
+app.get('/user-search', function(request, response) {
+    daoUser.getAllUsers(request.session.currentUser, function(err, result) {
+        if(err) {
+            response.render("user-search", { errorMsg: err.message, users: null });
+        }
+        else {
+            response.render("user-search", { errorMsg: null, users: result});
+        }
+    })
+});
