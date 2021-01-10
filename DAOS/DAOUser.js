@@ -25,7 +25,7 @@ class DAOUsers {
                                 callback(null, false); //no está el usuario con el password proporcionado
                             }
                             else {
-                                callback(null, true);
+                                callback(null, rows[0]);
                             }
                         }
                     });
@@ -33,7 +33,7 @@ class DAOUsers {
         }
         );
     }
-    addUser(email, password, password2, name, callback) {
+    addUser(email, password, password2, name, file, callback) {
 
         this.pool.getConnection(function (err, connection) {
             if (err) {
@@ -45,14 +45,14 @@ class DAOUsers {
                     function (err, rows) {
                         connection.release(); // devolver al pool la conexión
                         if (err) {
+
                             callback(new Error("Error de acceso a la base de datos"));
                         }
                         else {
                             if (password == password2) {
-                                console.log(rows.length);
                                 if (rows.length === 0) {
-                                    const sql = "INSERT INTO user(email, password, name) VALUES (?,?,?)";
-                                    connection.query(sql, [email, password, name],
+                                    const sql = "INSERT INTO user(email, name, password, img) VALUES (?,?,?,?)";
+                                    connection.query(sql, [email, name, password, file],
                                         function (err, rows) {
                                             if (err) {
                                                 callback(new Error("Error en la insercción en la base de datos"));
@@ -84,7 +84,7 @@ class DAOUsers {
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                connection.query("SELECT email, name, img, SignUpDate FROM user WHERE email = ?",
+                connection.query("SELECT id, email, name, img, SignUpDate FROM user WHERE email = ?",
                     [email],
                     function (err, rows) {
                         connection.release(); // devolver al pool la conexión
@@ -97,7 +97,6 @@ class DAOUsers {
                             }
                             else {
                                 var resultArray = Object.values(JSON.parse(JSON.stringify(rows)))
-                                console.log(resultArray);
                                 callback(null, resultArray);
                             }
                         }
@@ -106,5 +105,31 @@ class DAOUsers {
         }
         );
     }
+
+    getUserImageName(id, callback) {  
+        this.pool.getConnection(function (err, connection) {
+            if (err) {
+                callback(new Error("Error de conexión a la base de datos"));
+            }
+            else {
+                connection.query("SELECT img FROM user WHERE id = ?",
+                    [id],
+                    function (err, rows) {
+                        connection.release(); // devolver al pool la conexión
+                        if (err) {
+                            callback(new Error("Error de acceso a la base de datos"));
+                        }
+                        else {
+                            if (rows.length === 0) {
+                                callback(new Error("No existe el usuario"));
+                            }
+                            else {
+                                callback(null, rows[0].img);
+                            }
+                        }
+                    });
+                }
+            });
+     }
 }
 module.exports = DAOUsers;
