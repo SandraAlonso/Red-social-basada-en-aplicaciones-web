@@ -132,7 +132,7 @@ class DAOUsers {
         });
     }
 
-   
+
 
     getAllUsers(id, callback) {
         this.pool.getConnection(function (err, connection) {
@@ -231,7 +231,7 @@ class DAOUsers {
                                             var answers = Object.values(JSON.parse(JSON.stringify(rows2)))
                                             var o = new Object();
                                             o.q = questions;
-                                            o.a= answers;
+                                            o.a = answers;
                                             callback(null, o);
                                         }
                                     }
@@ -260,15 +260,155 @@ class DAOUsers {
                             callback(new Error("Error de acceso a la base de dato2s"));
                         }
                         else {
-                                var score = Object.values(JSON.parse(JSON.stringify(rows)))
-                                let suma = 10*score[0].likes -2*score[0].dislikes
-                                callback(null, suma);
+                            var score = Object.values(JSON.parse(JSON.stringify(rows)))
+                            let suma = 10 * score[0].likes - 2 * score[0].dislikes
+                            callback(null, suma);
 
-                            }
+                        }
 
-                        });
+                    });
             }
         });
+    }
+
+    getVisitedQuestions(id, callback) {
+        this.pool.getConnection(function (err, connection) {
+            if (err) {
+                callback(new Error("Error de conexión a la base de datos1"));
+            }
+            else {
+                connection.query("SELECT q.id FROM question q LEFT JOIN visit v ON v.idQuestion = q.id WHERE q.idUser = ?",
+                    [id],
+                    function (err, rows) {
+                        if (err) {
+                            callback(new Error("Error de acceso a la base de dato2s"));
+                        }
+                        else {
+                            var result = new Object();
+                            result.gold = 0;
+                            result.silver = 0;
+                            result.bronze = 0;
+                            var v = 1;
+                            var visitedQuestion = Object.values(JSON.parse(JSON.stringify(rows)));
+                            var ant;
+                            for (let i of visitedQuestion) {
+                                if (typeof ant === 'undefined' || i.id == ant.id) {
+                                    v++;
+                                }
+                                else {
+
+                                    if (v => 2 && v < 4) {
+                                        result.bronze++;
+                                    }
+                                    else if (v => 4 && v < 6) {
+                                        result.silver++;
+
+                                    }
+                                    else if (v => 6) {
+                                        result.gold++;
+
+                                    }
+                                    v = 1;
+                                }
+                                ant = i;
+
+                            }
+                            callback(null, result);
+
+                        }
+
+                    });
+            }
+        });
+    }
+    getVotedQuestions(id, callback) {
+        this.pool.getConnection(function (err, connection) {
+            if (err) {
+                callback(new Error("Error de conexión a la base de datos1"));
+            }
+            else {
+                connection.query("SELECT DISTINCT q.id, SUM(vq.type) over (PARTITION by q.id) as votes FROM votequestion vq RIGHT JOIN question q ON vq.idQuestion = q.id WHERE q.idUser = ?",
+                    [id],
+                    function (err, rows) {
+                        if (err) {
+                            callback(new Error("Error de acceso a la base de dato2s"));
+                        }
+                        else {
+                            var result = new Object();
+                            result.gold = 0;
+                            result.silver = 0;
+                            result.bronze1 = 0;
+                            result.bronze2 = 0;
+
+                            var votedQuestion = Object.values(JSON.parse(JSON.stringify(rows)));
+                            for (let i of votedQuestion) {
+                                if (i.votes >= 1 && i.votes < 2) {
+                                    result.bronze1++;
+                                }
+                                else if (i.votes >= 2 && i.votes < 4) {
+                                    result.bronze2++;
+
+                                }
+                                else if (i.votes >= 4 && i.votes < 6) {
+                                    result.silver++;
+
+                                }
+                                else if (i.votes >= 6) {
+                                    result.gold++;
+                                }
+                            }
+
+                        }
+                        console.log("medallas")
+                        console.log(result);
+                        callback(null, result);
+
+                    });
+
+                    }
+    });
+
+    }
+    getVotedAnswer(id, callback) {
+        this.pool.getConnection(function (err, connection) {
+            if (err) {
+                callback(new Error("Error de conexión a la base de datos1"));
+            }
+            else {
+                connection.query("SELECT DISTINCT a.id, SUM(va.type) over (PARTITION by a.id) as votes FROM voteanwer va RIGHT JOIN answer a ON va.idAnswer = a.id WHERE a.idUser = ?",
+                    [id],
+                    function (err, rows) {
+                        if (err) {
+                            callback(new Error("Error de acceso a la base de dato2s"));
+                        }
+                        else {
+                            var result = new Object();
+                            result.gold = 0;
+                            result.silver = 0;
+                            result.bronze = 0;
+
+                            var votedAnswer = Object.values(JSON.parse(JSON.stringify(rows)));
+                            for (let i of votedAnswer) {
+                                if (i.votes >= 2 && i.votes < 4) {
+                                    result.bronze++;
+                                }
+                                else if (i.votes >= 4 && i.votes < 6) {
+                                    result.silver++;
+
+                                }
+                                else if (i.votes >= 6) {
+                                    result.gold++;
+                                }
+                            }
+
+                        }
+                         callback(null, result);
+
+                    });
+
+                    }
+    });
+
     }
 }
 

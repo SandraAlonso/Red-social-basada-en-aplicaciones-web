@@ -77,42 +77,68 @@
 
             <div class="medals">
                 <div class="user-title">Medallas</div>
+                <% if (errorMsg!=null) { %>
+                    <div class="error"><%= errorMsg %></div>
+                <% } %>
+                
                 <div class="medal-types">
                     <div class="bronze">
                         <div>
                             <div>Bronce</div>
-                            <div class="number">5</div>
+                            <div class="number"><%= visited.bronze + qVoted.bronze2 + qVoted.bronze1 + aVoted.bronze %></div>
                         </div>
                         <ul>
-                            <li class="medal-descript">Pregunta popular</li>
-                            <li class="medal-descript">Respuesta interesante</li>
-                            <li class="medal-descript">Estudiante</li>
+                            <% if (visited.bronze!=0) {  %>
+                                <li class="medal-descript">Pregunta popular x <%= visited.bronze %></li>
+                            <% } %>
+                            <% if (qVoted.bronze1!=0) {  %>
+                                <li class="medal-descript">Estudiante x <%= qVoted.bronze1 %></li>
+                            <% } %>
+                            <% if (qVoted.bronze2!=0) {  %>
+                                <li class="medal-descript">Pregunta interesante x <%= qVoted.bronze2 %></li>
+                            <% } %>
+                            <% if (aVoted.bronze!=0) {  %>
+                                <li class="medal-descript">Respuesta interesante x <%= aVoted.bronze %></li>
+                            <% } %>
+                           
                         </ul>
                     </div>
                     <div class="silver">
                         <div>
                             <div>Plata</div>
-                            <div class="number">3</div>
+                            <div class="number"><%= visited.silver + qVoted.silver + aVoted.silver %></div>
                         </div>
                         <ul>
-                            <li class="medal-descript">Pregunta popular</li>
-                            <li class="medal-descript">Respuesta interesante</li>
-                            <li class="medal-descript">Estudiante</li>
+                            <% if (visited.silver!=0) {  %>
+                                <li class="medal-descript">Pregunta destacada x <%= visited.silver %></li>
+                            <% } %>
+                            <% if (qVoted.silver!=0) {  %>
+                                <li class="medal-descript">Buena pregunta x <%= qVoted.silver %></li>
+                            <% } %>
+                            <% if (aVoted.silver!=0) {  %>
+                                <li class="medal-descript">Buena respuesta x <%= aVoted.silver %></li>
+                            <% } %>
                         </ul>
                     </div>
                     <div class="gold">
                         <div>
                             <div>Oro</div>
-                            <div class="number">2</div>
+                            <div class="number"><%= visited.gold + qVoted.gold + aVoted.gold %></div>
                         </div>
                         <ul>
-                            <li class="medal-descript">Pregunta popular</li>
-                            <li class="medal-descript">Respuesta interesante</li>
-                            <li class="medal-descript">Estudiante</li>
+                            <% if (visited.gold!=0) {  %>
+                                <li class="medal-descript">Pregunta famosa x <%= visited.gold %></li>
+                            <% } %>
+                            <% if (qVoted.gold!=0) {  %>
+                                <li class="medal-descript">Excelente pregunta x <%= qVoted.gold %></li>
+                            <% } %>
+                            <% if (aVoted.gold!=0) {  %>
+                                <li class="medal-descript">Excelente respuesta x <%= aVoted.gold %></li>
+                            <% } %>
                         </ul>
                     </div>
                 </div>
-
+               
             </div>
         </div>
 

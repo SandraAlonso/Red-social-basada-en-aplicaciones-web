@@ -181,7 +181,28 @@ app.get("/users", function (request, response) {
                             response.render("users", { errorMsg: err.message });
                         }
                         else {
-                            response.render("users", { errorMsg: null, score: result3, numQuestion: result2.q[0].quest, numAnswer: result2.a[0].ans, name: result[0].name, email: result[0].name, img: result[0].img, sud: result[0].SignUpDate.substring(0, 10) });
+                            daoUser.getVisitedQuestions(request.session.currentUser, function (err, result4) {
+                                if (err) {
+                                    response.render("users", { errorMsg: err.message });
+                                }
+                                else {
+                                    daoUser.getVotedQuestions(request.session.currentUser, function (err, result5) {
+                                        if (err) {
+                                            response.render("users", { errorMsg: err.message });
+                                        }
+                                        else {
+                                            daoUser.getVotedAnswer(request.session.currentUser, function (err, result6) {
+                                                if (err) {
+                                                    response.render("users", { errorMsg: err.message });
+                                                }
+                                                else {
+                                                    response.render("users", { errorMsg: null, aVoted: result6, qVoted: result5, visited: result4, score: result3, numQuestion: result2.q[0].quest, numAnswer: result2.a[0].ans, name: result[0].name, email: result[0].name, img: result[0].img, sud: result[0].SignUpDate.substring(0, 10) });
+                                                }
+                                            })
+                                        }
+                                    })
+                                }
+                            })
                         }
                     })
                 }
