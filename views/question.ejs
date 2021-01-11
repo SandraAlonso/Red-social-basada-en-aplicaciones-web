@@ -1,132 +1,78 @@
 <!DOCTYPE html>
 <html lang="es">
 
-<head>
-    <title>404</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="./css/style.css">   
-    <link rel="icon" type="img/png" href="./img/favicon.png"> 
-    <link href="https://fonts.googleapis.com/css2?family=Catamaran&display=swap" rel="stylesheet">
-</head>
-
-
+<%- include ('partials/head.ejs') %>
 <body>
-
-    <header>
-        <nav>
-            <div class="nav-left">
-                <img src="./img/logo.png" alt="logo de 404">
-
-                <ul>
-                    <li>
-                        <a class="nav-button" href="/questions">Preguntas</a>
-                    </li>
-                    <li>
-                        <a class="nav-button" href="notAnswer.html">Sin responder</a>
-                    </li>
-                    <li>
-                        <a class="nav-button" href="/user-search">Usuarios</a>
-                    </li>
-                </ul>
-
-            </div>
-            <div class="nav-right">
-                <img class="userPhoto" src="/imagenUsuario" alt="imagen de perfil">
-                <span> <a class = "nombreUsuario" href="/users"><%= userName %></a></span>
-                <a href="/logout">Cerrar sesión</a>
-            </div>
-        </nav>
-</header>
-
-<article>
-
-    <form class="search">
-        <div class="search-box">
-            <img class="search-icon" src="./img/busqueda.png">
-            <input class="search-input" type="text" placeholder="Bucar por título/cuerpo de pregunta">
-        </div>
-        <input type="submit" value="Buscar">
-    </form>
-
+<%- include ('partials/header.ejs') %>
+    <article>
+    <%- include ('partials/search.ejs') %>
+    <% if (question) { %>
     <div class="question">
-        <h2>¿Cómo funciona exactamente?</h2>
+        <h2><%= question.title %></h2>
         <span class="views">Visto 1 veces</span>
         <div class="vote-container">
-            <span>0 votos</span>
-            <img class="like-icon"src="./img/me-gusta.png">
-            <img class="like-icon invested" src="./img/me-gusta.png">
+            <span><%= question.likes %></span>
+            <img class="like-icon" src="/img/me-gusta.png">
+            <img class="like-icon invested" src="/img/me-gusta.png">
         </div>
         <div class="card">
             <div class="card-left">
-                <h3>Ejemplo de pregunta</h3>
-                <p>Descripcion</p>
+                <h3><%= question.title %></h3>
+                <p><%= question.body %></p>
                 <div class="tag-container">
-                    <span class="tag">Etiqueta</span>
-                    <span class="tag">Etiqueta</span>
+                    <% if(question.tags) { question.tags.forEach(function(tag) { %>
+                        <span class="tag"><%= tag %></span>
+                    <% })}; %>
                 </div>
             </div>
             <div class="card-right">
-                <p>Formulada el 6/6/6666</p>
-                <img src="./img/profile.png">
-                <span>Nombre</span>
+                <p>Formulada el <%= question.date %></p>
+                <img src="/user_imgs/<%= question.img %>">
+                <span><%= question.name %></span>
             </div>
         </div>
 
     </div>
-
-    <h3 class="number-answers">1 respuesta</h3>
-
+    <% } %>
+    <% if (answers) { %>
+    <h3 class="number-answers"><%= answers.length %> respuestas</h3>
     <div>
         <ul>
+            <% answers.forEach(function(answer) { %>
             <div class="vote-container">
-                <span>0 votos</span>
-                <img class="like-icon"src="./img/me-gusta.png">
-                <img class="like-icon invested" src="./img/me-gusta.png">
+                <span><%= answer.likes %> votos</span>
+                <img class="like-icon"src="/img/me-gusta.png">
+                <img class="like-icon invested" src="/img/me-gusta.png">
             </div>
 
             <li class="card">
                 <div class="card-left">
-                    <h3>Ejemplo de pregunta</h3>
-                    <p>Descripcion</p>
+                    <p><%= answer.body %></p>
                 </div>
                 <div class="card-right">
-                    <p>Formulada el 6/6/6666</p>
-                    <img src="./img/profile.png">
-                    <span>Nombre</span>
+                    <p>Formulada el <%= answer.date %></p>
+                    <img src="/user_imgs/<%= answer.img %>">
+                    <span><%= answer.name %></span>
                 </div>
             </li>
-
-            <div class="vote-container">
-                <span>0 votos</span>
-                <img class="like-icon"src="./img/me-gusta.png">
-                <img class="like-icon invested" src="./img/me-gusta.png">
-            </div>
-
-            <li class="card">
-                <div class="card-left">
-                    <h3>Ejemplo de pregunta</h3>
-                    <p>Descripcion</p>
-                </div>
-                <div class="card-right">
-                    <p>Formulada el 6/6/6666</p>
-                    <img src="./img/profile.png">
-                    <span>Nombre</span>
-                </div>
-            </li>
+            <% }); %>
         </ul>
     </div>
+    <% }; %>
+
+
+    <% if (errorMsg!=null) { %>
+        <div class="error"><%= errorMsg %></div>
+    <% } %>
 
     <h3 class="number-answers">Tu respuesta</h3>
-    <form class="form-answer">
+    <form class="form-answer" method="POST">
         <textarea name="answer" placeholder="Introduce aquí tu respuesta"></textarea>
         <input type="submit" value="Enviar">
     </form>
 </article>
 
-<footer>
-    <span>Hecho con amor por Sandra Alonso y Héctor Arranz</span>
-</footer>
-   
+<%- include ('partials/footer.ejs') %>   
 </body>
 
 </html>

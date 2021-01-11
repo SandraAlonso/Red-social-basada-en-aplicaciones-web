@@ -1,59 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
-
-<head>
-    <title>404</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="./css/style.css">    
-    <link href="https://fonts.googleapis.com/css2?family=Catamaran&display=swap" rel="stylesheet">
-    <link rel="icon" type="img/png" href="./img/favicon.png">
-</head>
-
-
+<%- include ('partials/head.ejs') %>
 <body>
-
-<header>
-        <nav>
-            <div class="nav-left">
-                <img src="./img/logo.png" alt="logo de 404">
-
-                <ul>
-                    <li>
-                        <a class="nav-button" href="/questions">Preguntas</a>
-                    </li>
-                    <li>
-                        <a class="nav-button" href="notAnswer.html">Sin responder</a>
-                    </li>
-                    <li>
-                        <a class="nav-button" href="/user-search">Usuarios</a>
-                    </li>
-                </ul>
-
-            </div>
-            <div class="nav-right">
-                <img class="userPhoto" src="./imagenUsuario" alt="imagen de perfil">
-                <span> <a class = "nombreUsuario" href="/users"><%= userName %></a></span>
-                <a href="/logout">Cerrar sesión</a>
-            </div>
-        </nav>
-</header>
-
+<%- include ('partials/header.ejs') %>
 <article>
-
-    <form class="search">
-        <div class="search-box">
-            <img class="search-icon" src="./img/busqueda.png">
-            <input class="search-input" type="text" placeholder="Bucar por título/cuerpo de pregunta">
-        </div>
-        <input type="submit" value="Buscar">
-    </form>
-
+<%- include ('partials/search.ejs') %>
 </article>
-
-<footer>
-    <span>Hecho con amor por Sandra Alonso y Héctor Arranz</span>
-</footer>
-   
+<%- include ('partials/footer.ejs') %>
 </body>
-
 </html>

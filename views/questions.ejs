@@ -1,58 +1,17 @@
 <!DOCTYPE html>
 <html lang="es">
 
-<head>
-    <title>404</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="./css/style.css">    
-    <link href="https://fonts.googleapis.com/css2?family=Catamaran&display=swap" rel="stylesheet">
-    <link rel="icon" type="img/png" href="./img/favicon.png">
-</head>
-
-
+<%- include ('partials/head.ejs') %>
 <body>
-
-<header>
-        <nav>
-            <div class="nav-left">
-                <img src="./img/logo.png" alt="logo de 404">
-
-                <ul>
-                    <li>
-                        <a class="nav-button" href="/questions">Preguntas</a>
-                    </li>
-                    <li>
-                        <a class="nav-button" href="notAnswer.html">Sin responder</a>
-                    </li>
-                    <li>
-                        <a class="nav-button" href="/user-search">Usuarios</a>
-                    </li>
-                </ul>
-
-            </div>
-            <div class="nav-right">
-                <img class="userPhoto" src="./imagenUsuario" alt="imagen de perfil">
-                <span> <a class = "nombreUsuario" href="/users"><%= userName %></a></span>
-                <a href="/logout">Cerrar sesión</a>
-            </div>
-        </nav>
-</header>
-
-<article>
-
-    <form class="search">
-        <div class="search-box">
-            <img class="search-icon" src="./img/busqueda.png">
-            <input class="search-input" type="text" placeholder="Bucar por título/cuerpo de pregunta">
-        </div>
-        <input type="submit" value="Buscar">
-    </form>
+<%- include ('partials/header.ejs') %>
+    <article>
+    <%- include ('partials/search.ejs') %>
 
     <h2>Todas las preguntas</h2>
 
     <div class="make-question">
         <p><%=questions.length%> preguntas</p>
-        <a href="/make-question">Formular una pregunta</a>
+        <a class="link-button" href="/make-question">Formular una pregunta</a>
     </div>
 
     <% if (errorMsg!=null) { %>
@@ -64,7 +23,9 @@
             <% if (questions) { questions.forEach(function(question) { %>
             <li class="card">
                 <div class="card-left">
-                    <h3><%= question.title %></h3>
+                    <h3>
+                        <a href="/question/<%= question.id %>"><%= question.title %></a>
+                    </h3>
                     <p><%= question.body %></p>
                     <div class="tag-container">
                         <% if(question.tags) { question.tags.forEach(function(tag) { %>
@@ -74,7 +35,7 @@
                 </div>
                 <div class="card-right">
                     <p>Formulada el <%= question.date %></p>
-                    <img src="./user_imgs/<%= question.img %>">
+                    <img src="/user_imgs/<%= question.img %>">
                     <span><%= question.name %></span>
                 </div>
             </li>
@@ -83,10 +44,8 @@
     </div>
 </article>
 
-<footer>
-    <span>Hecho con amor por Sandra Alonso y Héctor Arranz</span>
-</footer>
-   
+<%- include ('partials/footer.ejs') %>
+
 </body>
 
 </html>

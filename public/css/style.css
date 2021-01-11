@@ -57,6 +57,10 @@ footer{
 }
 
 .userPhoto{
+    background-color: white;
+    border-radius: 70px;
+    border: 2px black solid;
+    padding: 10px;
     width: 70px;
     height: 70px;
 }
@@ -292,12 +296,15 @@ h2{
     justify-content: flex-end;
 }
 a{
+    text-decoration: none;
+    color: black;
+}
+.link-button{
     box-shadow: 10px 10px 16px -8px rgba(0,0,0,0.75);
     border-radius: 20px;
     background-color: black;
     color: white;
     padding: 7px 30px;
-    text-decoration: none;
     margin-left: 10px;
     font-size: 14px;
     text-align: center;
@@ -414,7 +421,7 @@ textarea {
   }
 
 .nombreUsuario{
-    color: black;
+    color: white;
     margin-top: 10px;
     text-align: center;
     font-weight: bold;

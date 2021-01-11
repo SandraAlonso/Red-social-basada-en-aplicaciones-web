@@ -36,7 +36,7 @@ app.listen(config.port, function (err) {
 
 //Añadir un middleware static para la entrega de los recursos estaticos al cliente
 const ficherosEstaticos = path.join(__dirname, "public");
-app.use(express.static(ficherosEstaticos));
+app.use("/", express.static(ficherosEstaticos));
 
 // Se incluye el middleware body-parser en la cadena de middleware
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -152,8 +152,9 @@ app.post("/create-user", upload.single('file'), function (request, response) {
     if (typeof request.file === 'undefined') {
         var rand = Math.floor(Math.random() * 4);
         request.body.img = 'profile-' + rand + '.png';
+        daoUser.addUser(request.body.email, request.body.password, request.body.password2, request.body.name, request.body.img, cb_addUser);
     }
-    daoUser.addUser(request.body.email, request.body.password, request.body.password2, request.body.name, request.body.img, cb_addUser);
+    else daoUser.addUser(request.body.email, request.body.password, request.body.password2, request.body.name, request.file.filename, cb_addUser);
     function cb_addUser(err) {
         if (err) {
             if (typeof request.file !== 'undefined') fs.unlinkSync('./user_imgs/' + request.file.filename);
@@ -284,6 +285,45 @@ app.get('/user-search', function (request, response) {
         }
         else {
             response.render("user-search", { errorMsg: null, users: result });
+        }
+    })
+});
+
+app.get('/question/:id', accesscontrol);
+app.get('/question/:id', function (request, response, next) {
+    daoQuestion.getQuestion(request.params.id, function (err, result) {
+        if (err) {
+            response.render("question", { errorMsg: err.message, question: null, answers: null });
+        }
+        else {
+            request.question = result;
+            next();
+        }
+    })
+});
+
+app.get('/question/:id', function (request, response) {
+    daoQuestion.getAnswers(request.params.id, function (err, result) {
+        if (err) {
+            response.render("question", { errorMsg: err.message, question: null, answers: null});
+        }
+        else {
+            console.log(result);
+            response.render("question", { errorMsg: null, question: request.question, answers: result})
+        }
+    })
+});
+
+app.post('/question/:id', accesscontrol);
+app.post('/question/:id', function (request, response) {
+    daoQuestion.insertAnswer(request.session.currentUser, request.params.id, request.body.answer, function (err, result) {
+        if (err) {
+            //TODO FALTA CONTROL DE ESTE ERROR
+            console.log(err);
+            response.redirect("/question/" + request.params.id);
+        }
+        else {
+            response.redirect("/question/" + request.params.id);
         }
     })
 });
