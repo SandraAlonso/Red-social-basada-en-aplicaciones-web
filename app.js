@@ -327,3 +327,59 @@ app.post('/question/:id', function (request, response) {
         }
     })
 });
+
+app.get('/question/:id/like-question/', accesscontrol);
+app.get('/question/:id/like-question/', function(request, response) {
+    daoQuestion.likeQuestion(request.session.currentUser, request.params.id, function(err) {
+        if (err) {
+            //TODO FALTA CONTROL DE ESTE ERROR
+            console.log(err);
+            response.redirect("/question/" + request.params.id);
+        }
+        else {
+            response.redirect("/question/" + request.params.id);
+        }
+    })
+});
+
+app.get('/question/:id/dislike-question/', accesscontrol);
+app.get('/question/:id/dislike-question/', function(request, response) {
+    daoQuestion.dislikeQuestion(request.session.currentUser, request.params.id, function(err) {
+        if (err) {
+            //TODO FALTA CONTROL DE ESTE ERROR
+            console.log(err);
+            response.redirect("/question/" + request.params.id);
+        }
+        else {
+            response.redirect("/question/" + request.params.id);
+        }
+    })
+});
+
+app.get('/question/:id/like-answer/:idAns', accesscontrol);
+app.get('/question/:id/like-answer/:idAns', function(request, response) {
+    daoQuestion.likeAnswer(request.session.currentUser, request.params.idAns, function(err) {
+        if (err) {
+            //TODO FALTA CONTROL DE ESTE ERROR
+            console.log(err);
+            response.redirect("/question/" + request.params.id);
+        }
+        else {
+            response.redirect("/question/" + request.params.id);
+        }
+    })
+});
+
+app.get('/question/:id/dislike-answer/:idAns', accesscontrol);
+app.get('/question/:id/dislike-answer/:idAns', function(request, response) {
+    daoQuestion.dislikeAnswer(request.session.currentUser, request.params.idAns, function(err) {
+        if (err) {
+            //TODO FALTA CONTROL DE ESTE ERROR
+            console.log(err);
+            response.redirect("/question/" + request.params.id);
+        }
+        else {
+            response.redirect("/question/" + request.params.id);
+        }
+    })
+});

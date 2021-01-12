@@ -174,5 +174,81 @@ class DAOTasks {
             }
         });
     }
+    likeQuestion(idUser, idQuestion, callback) {
+        this.pool.getConnection(function (err, connection) {
+            if (err) {
+                callback(new Error("Error de conexión a la base de datos"));
+            }
+            else {
+                const sql = "INSERT INTO votequestion(idQuestion, idUser, type) VALUES (?,?,1) ON DUPLICATE KEY UPDATE type = 1";
+                connection.query(sql, [idQuestion, idUser],
+                function (err) {
+                    if (err) {
+                        callback(new Error("Error de acceso a la base de datos1"));
+                    }
+                    else {
+                        callback(null);
+                    }
+                });
+            }
+        });
+    }
+    dislikeQuestion(idUser, idQuestion, callback) {
+        this.pool.getConnection(function (err, connection) {
+            if (err) {
+                callback(new Error("Error de conexión a la base de datos"));
+            }
+            else {
+                const sql = "INSERT INTO votequestion(idQuestion, idUser, type) VALUES (?,?,-1) ON DUPLICATE KEY UPDATE type = -1";
+                connection.query(sql, [idQuestion, idUser],
+                function (err) {
+                    if (err) {
+                        callback(new Error("Error de acceso a la base de datos1"));
+                    }
+                    else {
+                        callback(null);
+                    }
+                });
+            }
+        });
+    }
+    likeAnswer(idUser, idAnswer, callback) {
+        this.pool.getConnection(function (err, connection) {
+            if (err) {
+                callback(new Error("Error de conexión a la base de datos"));
+            }
+            else {
+                const sql = "INSERT INTO voteanswer(idAnswer, idUser, type) VALUES (?,?,1) ON DUPLICATE KEY UPDATE type = 1";
+                connection.query(sql, [idAnswer, idUser],
+                function (err) {
+                    if (err) {
+                        callback(new Error("Error de acceso a la base de datos1"));
+                    }
+                    else {
+                        callback(null);
+                    }
+                });
+            }
+        });
+    }
+    dislikeAnswer(idUser, idAnswer, callback) {
+        this.pool.getConnection(function (err, connection) {
+            if (err) {
+                callback(new Error("Error de conexión a la base de datos"));
+            }
+            else {
+                const sql = "INSERT INTO voteanswer(idAnswer, idUser, type) VALUES (?,?,-1) ON DUPLICATE KEY UPDATE type = -1";
+                connection.query(sql, [idAnswer, idUser],
+                function (err) {
+                    if (err) {
+                        callback(new Error("Error de acceso a la base de datos1"));
+                    }
+                    else {
+                        callback(null);
+                    }
+                });
+            }
+        });
+    }
 }
 module.exports = DAOTasks

@@ -11,9 +11,13 @@
         <h2><%= question.title %></h2>
         <span class="views">Visto 1 veces</span>
         <div class="vote-container">
-            <span><%= question.likes %></span>
-            <img class="like-icon" src="/img/me-gusta.png">
-            <img class="like-icon invested" src="/img/me-gusta.png">
+            <span><%= question.likes %> votos</span>
+            <a href="<%=question.id%>/like-question">
+                <img class="like-icon" src="/img/me-gusta.png">
+            </a>
+            <a href="<%=question.id%>/dislike-question">
+                <img class="like-icon invested" src="/img/me-gusta.png">
+            </a>
         </div>
         <div class="card">
             <div class="card-left">
@@ -41,8 +45,12 @@
             <% answers.forEach(function(answer) { %>
             <div class="vote-container">
                 <span><%= answer.likes %> votos</span>
-                <img class="like-icon"src="/img/me-gusta.png">
-                <img class="like-icon invested" src="/img/me-gusta.png">
+                <a href="<%=question.id%>/like-answer/<%=answer.id %>">
+                    <img class="like-icon"src="/img/me-gusta.png">
+                </a>
+                <a href="<%=question.id%>/dislike-answer/<%=answer.id %>">
+                    <img class="like-icon invested" src="/img/me-gusta.png">
+                </a>
             </div>
 
             <li class="card">
