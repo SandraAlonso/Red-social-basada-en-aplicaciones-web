@@ -16,6 +16,7 @@ class DAOTasks {
 
                     function (err, rows) {
                         if (err) {
+                            connection.release(); // devolver al pool la conexión
                             callback(new Error("Error de acceso a la base de datos1"));
                         }
                         else {
@@ -27,16 +28,20 @@ class DAOTasks {
                                 }
                                 connection.query(sql, [values],
                                     function (err) {
-                                        connection.release();
                                         if (err) {
+                                            connection.release();
                                             callback(new Error("Error de acceso a la base de datos2"));
                                         }
                                         else {
+                                            connection.release();
                                             callback(null);
                                         }
                                     });
                             }
-                            else callback(null);
+                            else {
+                                connection.release();
+                                callback(null);
+                            }
                         }
                     });
             }
@@ -51,6 +56,7 @@ class DAOTasks {
                 connection.query("SELECT question.id, question.title, question.body, UNIX_TIMESTAMP(question.date) AS date, user.name, user.img, tags.tag FROM question LEFT JOIN tags ON question.id = tags.idQuestion JOIN user ON question.idUser = user.id ORDER BY question.date ASC",
                 function (err, rows) {
                     if (err) {
+                        connection.release();
                         callback(new Error("Error de acceso a la base de datos"));
                     }
                     else {
@@ -76,6 +82,7 @@ class DAOTasks {
                                 }
                             })
                         }
+                        connection.release();
                         callback(null, questions);
                     }
                 });
@@ -92,6 +99,7 @@ class DAOTasks {
                 [id],
                 function (err, rows) {
                     if (err) {
+                        connection.release();
                         callback(new Error("Error de acceso a la base de datos"));
                     }
                     else {
@@ -119,6 +127,7 @@ class DAOTasks {
                                 }
                             });
                         }
+                        connection.release();
                         callback(null, question);
                     }
                 });
@@ -135,6 +144,7 @@ class DAOTasks {
                 [id],
                 function (err, rows) {
                     if (err) {
+                        connection.release();
                         callback(new Error("Error de acceso a la base de datos"));
                     }
                     else {
@@ -153,6 +163,7 @@ class DAOTasks {
                                 answers.push(answer);
                             });
                         }
+                        connection.release();
                         callback(null, answers);
                     }
                 });
@@ -168,6 +179,7 @@ class DAOTasks {
                 const sql = "INSERT INTO answer(idQuestion, idUser, body) VALUES (?,?,?)";
                 connection.query(sql, [idQuestion, idUser, answer],
                 function (err) {
+                    connection.release(); // devolver al pool la conexión
                     if (err) {
                         callback(new Error("Error de acceso a la base de datos1"));
                     }
@@ -188,6 +200,7 @@ class DAOTasks {
                 connection.query(sql, [idUser, idQuestion], 
                 function(err, rows) {
                     if (err) {
+                        connection.release();
                         callback(new Error("Error de acceso a la base de datos1"));
                     }
                     else {
@@ -196,6 +209,7 @@ class DAOTasks {
                             connection.query(sql2, [idQuestion, idUser, value, value],
                             function (err) {
                                 if (err) {
+                                    connection.release();
                                     callback(new Error("Error de acceso a la base de datos1"));
                                 }
                                 else {
@@ -205,12 +219,14 @@ class DAOTasks {
                                     else sql3 = "UPDATE question SET question.dislikes = question.dislikes + ?, question.likes = question.likes + ? WHERE question.id = ?";
                                     connection.query(sql3, [Math.abs(value), plus, idQuestion], function(err) {
                                         if(err) {
+                                            connection.release(); // devolver al pool la conexión
                                             callback(new Error("Error de acceso a la base de datos2"));
                                         }
                                     });
                                 }
                             });
                         }
+                        connection.release(); // devolver al pool la conexión
                         callback(null); 
                     }
                 });
@@ -226,6 +242,7 @@ class DAOTasks {
                 const sql = "SELECT * FROM question WHERE question.id = ?";
                 connection.query(sql, [idQuestion], function(err, rows) {
                     if(err) {
+                        connection.release(); // devolver al pool la conexión
                         callback(new Error("Error de acceso a la base de datos1"));
                     }
                     else {
@@ -255,13 +272,14 @@ class DAOTasks {
                         if(add) {
                             const sql2 = "INSERT INTO medals(idUser, idElement, type, description) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE type = type";
                             connection.query(sql2, [idUser, idQuestion, type, description], function(err) {
+                                connection.release(); // devolver al pool la conexión
                                 if (err) {
-                                    console.log(err);
+                                    connection.release(); // devolver al pool la conexión
                                     callback(new Error("Error de conexión a la base de datos2"));
                                 }
                             });
                         }
-
+                        connection.release(); // devolver al pool la conexión
                         callback(null);
                     }
                 });
@@ -278,6 +296,7 @@ class DAOTasks {
                 connection.query(sql, [idUser, idAnswer], 
                 function(err, rows) {
                     if (err) {
+                        connection.release(); // devolver al pool la conexión
                         callback(new Error("Error de acceso a la base de datos1"));
                     }
                     else {
@@ -286,6 +305,7 @@ class DAOTasks {
                             connection.query(sql2, [idAnswer, idUser, value, value],
                             function (err) {
                                 if (err) {
+                                    connection.release(); // devolver al pool la conexión
                                     callback(new Error("Error de acceso a la base de datos1"));
                                 }
                                 else {
@@ -294,13 +314,16 @@ class DAOTasks {
                                     if(value === 1) sql3 = "UPDATE answer SET answer.likes = answer.likes + ?, answer.dislikes = answer.dislikes + ? WHERE answer.id = ?";
                                     else sql3 = "UPDATE answer SET answer.dislikes = answer.dislikes + ?, answer.likes = answer.likes + ? WHERE answer.id = ?";
                                     connection.query(sql3, [Math.abs(value), plus, idAnswer], function(err) {
+                                        connection.release(); // devolver al pool la conexión
                                         if(err) {
+                                            connection.release(); // devolver al pool la conexión
                                             callback(new Error("Error de acceso a la base de datos2"));
                                         }
                                     });
                                 }
                             });
                         }
+                        connection.release(); // devolver al pool la conexión
                         callback(null); 
                     }
                 });
@@ -316,6 +339,7 @@ class DAOTasks {
                 const sql = "SELECT * FROM answer WHERE answer.id = ?";
                 connection.query(sql, [idAnswer], function(err, rows) {
                     if(err) {
+                        connection.release(); // devolver al pool la conexión
                         callback(new Error("Error de acceso a la base de datos1"));
                     }
                     else {
@@ -341,13 +365,14 @@ class DAOTasks {
                         if(add) {
                             const sql2 = "INSERT INTO medals(idUser, idElement, type, description) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE type = type";
                             connection.query(sql2, [idUser, idAnswer, type, description], function(err) {
+                                connection.release(); // devolver al pool la conexión
                                 if (err) {
-                                    console.log(err);
+                                    connection.release(); // devolver al pool la conexión
                                     callback(new Error("Error de conexión a la base de datos2"));
                                 }
                             });
                         }
-
+                        connection.release(); // devolver al pool la conexión
                         callback(null);
                     }
                 });
@@ -364,6 +389,7 @@ class DAOTasks {
                 connection.query(sql, [idUser, idQuestion], 
                 function(err, rows) {
                     if (err) {
+                        connection.release(); // devolver al pool la conexión
                         callback(new Error("Error en la base de datos 1"));
                     }
                     else {
@@ -371,17 +397,22 @@ class DAOTasks {
                             const sql1 = "INSERT INTO visit(idUser, idQuestion) VALUES (?,?) ON DUPLICATE KEY UPDATE idUser = ?";
                             connection.query(sql1, [idUser, idQuestion, idUser], function(err){
                                 if(err) {
+                                    connection.release(); // devolver al pool la conexión
                                     callback(new Error("Error en la base de datos 1"));
                                 }
                                 else{
                                     const sql2 = "UPDATE question SET question.views = question.views + 1 WHERE question.id = ?";
                                     connection.query(sql2, [idQuestion], function (err) {
-                                        if(err) callback(new Error("Error en la base de datos 2"));
+                                        if(err) {
+                                            connection.release(); // devolver al pool la conexión
+                                            callback(new Error("Error en la base de datos 2"));
+                                        }
+
                                     })
                                 }
                             });
                         }
-
+                        connection.release(); // devolver al pool la conexión
                         callback(null);
                     }
                 });
@@ -395,8 +426,10 @@ class DAOTasks {
             }
             else {
                 const sql = "SELECT * FROM question WHERE question.id = ?";
-                connection.query(sql, [idQuestion], function(err, rows) {
+                connection.query(sql, [idQuestion], 
+                function(err, rows) {
                     if(err) {
+                        connection.release(); // devolver al pool la conexión
                         callback(new Error("Error de acceso a la base de datos1"));
                     }
                     else {
@@ -423,12 +456,12 @@ class DAOTasks {
                             const sql2 = "INSERT INTO medals(idUser, idElement, type, description) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE type = type";
                             connection.query(sql2, [idUser, idQuestion, type, description], function(err) {
                                 if (err) {
-                                    console.log(err);
+                                    connection.release(); // devolver al pool la conexión
                                     callback(new Error("Error de conexión a la base de datos2"));
                                 }
                             });
                         }
-
+                        connection.release(); // devolver al pool la conexión
                         callback(null);
                     }
                 });
@@ -446,6 +479,7 @@ class DAOTasks {
                 const sql ="SELECT question.id, question.title, question.body, UNIX_TIMESTAMP(question.date) AS date, user.name, user.img, tags.tag FROM question LEFT JOIN tags ON question.id = tags.idQuestion JOIN user ON question.idUser = user.id WHERE NOT EXISTS (SELECT a.id FROM answer a where question.id = a.idQuestion) ORDER BY question.date ASC";
                 connection.query(sql, 
                 function(err, rows) {
+                    connection.release(); // devolver al pool la conexión
                     if (err) {
                         callback(new Error("Error en la base de datos 1"));
                     }
