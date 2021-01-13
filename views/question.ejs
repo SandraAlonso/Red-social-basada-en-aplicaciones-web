@@ -9,9 +9,9 @@
     <% if (question) { %>
     <div class="question">
         <h2><%= question.title %></h2>
-        <span class="views">Visto 1 veces</span>
+        <span class="views">Visto <%= question.views %> veces</span>
         <div class="vote-container">
-            <span><%= question.likes %> votos</span>
+            <span><%= question.likes - question.dislikes %> votos</span>
             <a href="<%=question.id%>/like-question">
                 <img class="like-icon" src="/img/me-gusta.png">
             </a>
@@ -44,7 +44,7 @@
         <ul>
             <% answers.forEach(function(answer) { %>
             <div class="vote-container">
-                <span><%= answer.likes %> votos</span>
+                <span><%= answer.likes - answer.dislikes %> votos</span>
                 <a href="<%=question.id%>/like-answer/<%=answer.id %>">
                     <img class="like-icon"src="/img/me-gusta.png">
                 </a>

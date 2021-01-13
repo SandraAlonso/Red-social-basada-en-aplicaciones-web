@@ -1,10 +1,6 @@
 "use strict";
 
 class utils {
-    getToDoQuestions(questions) {
-        return questions.filter(n => n.done === false || n.done === undefined).map(n => n.text)
-    }
-
     findByTag(questions, tag) {
         return questions.filter(o => o.tags == tag);
     }
@@ -12,12 +8,6 @@ class utils {
     findByTags(questions, tag) {
         return questions.filter(o => o.tags.some(aux => tag.some(a => a == aux)));
     }
-
-
-    countDone(questions) {
-        return (questions.filter(n => n.done === false)).length;
-    }
-
 
     createQuestion(texto) {
         var questions = new Object;
@@ -31,6 +21,11 @@ class utils {
         }
         else questions = null;
         return questions;
+    }
+
+    createDate(date) {
+        var date_js = new Date(date * 1000);
+        return date_js.getDate() + '/' + (date_js.getMonth() + 1) + '/' + date_js.getFullYear();
     }
 }
 

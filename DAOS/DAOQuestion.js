@@ -1,5 +1,8 @@
 "use strict";
 
+const utils = require("../utils");
+const ut = new utils;
+
 class DAOTasks {
     constructor(pool) { this.pool = pool; }
     insertQuestion(id, question, callback) {
@@ -64,8 +67,7 @@ class DAOTasks {
                                     question.id = value.id;
                                     question.title = value.title;
                                     question.body = value.body.substring(0, 150);
-                                    var date_js = new Date(value.date * 1000);
-                                    question.date = date_js.getDate() + '/' + (date_js.getMonth() + 1) + '/' + date_js.getFullYear();
+                                    question.date = ut.createDate(value.date);
                                     question.name = value.name;
                                     question.img = value.img;
                                     question.tags = [];
@@ -86,7 +88,7 @@ class DAOTasks {
                 callback(new Error("Error de conexión a la base de datos"));    
             }
             else {
-                connection.query("SELECT question.id, question.title, question.body, question.likes, UNIX_TIMESTAMP(question.date) AS date, user.name, user.img, tags.tag FROM question LEFT JOIN tags ON question.id = tags.idQuestion JOIN user ON question.idUser = user.id WHERE question.id = ?",
+                connection.query("SELECT question.id, question.title, question.body, question.likes, question.dislikes, question.views, UNIX_TIMESTAMP(question.date) AS date, user.name, user.img, tags.tag FROM question LEFT JOIN tags ON question.id = tags.idQuestion JOIN user ON question.idUser = user.id WHERE question.id = ?",
                 [id],
                 function (err, rows) {
                     if (err) {
@@ -110,6 +112,8 @@ class DAOTasks {
                                     question.name = value.name;
                                     question.img = value.img;
                                     question.likes = value.likes;
+                                    question.dislikes = value.dislikes;
+                                    question.views = value.views;
                                     question.tags = [];
                                     if(value.tag !== null) question.tags.push(value.tag);
                                 }
@@ -127,7 +131,7 @@ class DAOTasks {
                 callback(new Error("Error de conexión a la base de datos"));    
             }
             else {
-                connection.query("SELECT answer.id, answer.body, UNIX_TIMESTAMP(answer.date) AS date, answer.likes, user.name, user.img FROM answer JOIN user ON answer.idUser = user.id WHERE answer.idQuestion = ?",
+                connection.query("SELECT answer.id, answer.body, UNIX_TIMESTAMP(answer.date) AS date, answer.likes, answer.dislikes, user.name, user.img FROM answer JOIN user ON answer.idUser = user.id WHERE answer.idQuestion = ?",
                 [id],
                 function (err, rows) {
                     if (err) {
@@ -135,7 +139,6 @@ class DAOTasks {
                     }
                     else {
                         var answers = [];
-                        console.log(rows);
                         if(rows.length != 0) {
                             rows.forEach(function(value, index, array) {
                                 var answer = new Object();
@@ -145,6 +148,7 @@ class DAOTasks {
                                 answer.date = date_js.getDate() + '/' + (date_js.getMonth() + 1) + '/' + date_js.getFullYear();
                                 answer.name = value.name;
                                 answer.likes = value.likes;
+                                answer.dislikes = value.dislikes;
                                 answer.img = value.img;
                                 answers.push(answer);
                             });
@@ -174,76 +178,256 @@ class DAOTasks {
             }
         });
     }
-    likeQuestion(idUser, idQuestion, callback) {
+    likeQuestion(idUser, idQuestion, value, callback) {
         this.pool.getConnection(function (err, connection) {
             if (err) {
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                const sql = "INSERT INTO votequestion(idQuestion, idUser, type) VALUES (?,?,1) ON DUPLICATE KEY UPDATE type = 1";
-                connection.query(sql, [idQuestion, idUser],
-                function (err) {
+                const sql ="SELECT type FROM votequestion WHERE idUser = ? AND idQuestion = ?";
+                connection.query(sql, [idUser, idQuestion], 
+                function(err, rows) {
                     if (err) {
                         callback(new Error("Error de acceso a la base de datos1"));
                     }
                     else {
+                        if(typeof rows[0] === 'undefined' || rows[0].type !== value) {
+                            const sql2 = "INSERT INTO votequestion(idQuestion, idUser, type) VALUES (?,?,?) ON DUPLICATE KEY UPDATE type = ?";
+                            connection.query(sql2, [idQuestion, idUser, value, value],
+                            function (err) {
+                                if (err) {
+                                    callback(new Error("Error de acceso a la base de datos1"));
+                                }
+                                else {
+                                    let sql3;
+                                    let plus = typeof rows[0] === 'undefined' ? 0 : -Math.abs(value);
+                                    if(value === 1) sql3 = "UPDATE question SET question.likes = question.likes + ?, question.dislikes = question.dislikes + ? WHERE question.id = ?";
+                                    else sql3 = "UPDATE question SET question.dislikes = question.dislikes + ?, question.likes = question.likes + ? WHERE question.id = ?";
+                                    connection.query(sql3, [Math.abs(value), plus, idQuestion], function(err) {
+                                        if(err) {
+                                            callback(new Error("Error de acceso a la base de datos2"));
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                        callback(null); 
+                    }
+                });
+            }
+        });
+    }
+    checkMedals(idUser, idQuestion, callback) {
+        this.pool.getConnection(function (err, connection) {
+            if (err) {
+                callback(new Error("Error de conexión a la base de datos"));
+            }
+            else {
+                const sql = "SELECT * FROM question WHERE question.id = ?";
+                connection.query(sql, [idQuestion], function(err, rows) {
+                    if(err) {
+                        callback(new Error("Error de acceso a la base de datos1"));
+                    }
+                    else {
+                        var type;
+                        var description;
+                        var add = true;
+                        if(rows[0].likes === 1) {
+                            type = "bronce";
+                            description = "Estudiante";
+                        }
+                        else if(rows[0].likes === 2) {
+                            type = "bronce";
+                            description = "Pregunta interesante";
+                        }
+                        else if (rows[0].likes === 4) {
+                            type = "plata";
+                            description = "Buena pregunta";
+                        }
+                        else if (rows[0].likes === 6) {
+                            type = "oro";
+                            description = "Excelente pregunta";
+                        }
+                        else {
+                            add = false;
+                        }
+
+                        if(add) {
+                            const sql2 = "INSERT INTO medals(idUser, idElement, type, description) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE type = type";
+                            connection.query(sql2, [idUser, idQuestion, type, description], function(err) {
+                                if (err) {
+                                    console.log(err);
+                                    callback(new Error("Error de conexión a la base de datos2"));
+                                }
+                            });
+                        }
+
                         callback(null);
                     }
                 });
             }
         });
     }
-    dislikeQuestion(idUser, idQuestion, callback) {
+    likeAnswer(idUser, idAnswer, value, callback) {
         this.pool.getConnection(function (err, connection) {
             if (err) {
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                const sql = "INSERT INTO votequestion(idQuestion, idUser, type) VALUES (?,?,-1) ON DUPLICATE KEY UPDATE type = -1";
-                connection.query(sql, [idQuestion, idUser],
-                function (err) {
+                const sql ="SELECT type FROM voteanswer WHERE idUser = ? AND idAnswer = ?";
+                connection.query(sql, [idUser, idAnswer], 
+                function(err, rows) {
                     if (err) {
                         callback(new Error("Error de acceso a la base de datos1"));
                     }
                     else {
+                        if(typeof rows[0] === 'undefined' || rows[0].type !== value) {
+                            const sql2 = "INSERT INTO voteanswer(idAnswer, idUser, type) VALUES (?,?,?) ON DUPLICATE KEY UPDATE type = ?";
+                            connection.query(sql2, [idAnswer, idUser, value, value],
+                            function (err) {
+                                if (err) {
+                                    callback(new Error("Error de acceso a la base de datos1"));
+                                }
+                                else {
+                                    let sql3;
+                                    let plus = typeof rows[0] === 'undefined' ? 0 : -Math.abs(value);
+                                    if(value === 1) sql3 = "UPDATE answer SET answer.likes = answer.likes + ?, answer.dislikes = answer.dislikes + ? WHERE answer.id = ?";
+                                    else sql3 = "UPDATE answer SET answer.dislikes = answer.dislikes + ?, answer.likes = answer.likes + ? WHERE answer.id = ?";
+                                    connection.query(sql3, [Math.abs(value), plus, idAnswer], function(err) {
+                                        if(err) {
+                                            callback(new Error("Error de acceso a la base de datos2"));
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                        callback(null); 
+                    }
+                });
+            }
+        });
+    }
+    checkMedalsAnswer(idUser, idAnswer, callback) {
+        this.pool.getConnection(function (err, connection) {
+            if (err) {
+                callback(new Error("Error de conexión a la base de datos"));
+            }
+            else {
+                const sql = "SELECT * FROM answer WHERE answer.id = ?";
+                connection.query(sql, [idAnswer], function(err, rows) {
+                    if(err) {
+                        callback(new Error("Error de acceso a la base de datos1"));
+                    }
+                    else {
+                        var type;
+                        var description;
+                        var add = true;
+                        if(rows[0].likes === 2) {
+                            type = "bronce";
+                            description = "Respuesta interesante";
+                        }
+                        else if (rows[0].likes === 4) {
+                            type = "plata";
+                            description = "Buena respuesta";
+                        }
+                        else if (rows[0].likes === 6) {
+                            type = "oro";
+                            description = "Excelente respuesta";
+                        }
+                        else {
+                            add = false;
+                        }
+
+                        if(add) {
+                            const sql2 = "INSERT INTO medals(idUser, idElement, type, description) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE type = type";
+                            connection.query(sql2, [idUser, idAnswer, type, description], function(err) {
+                                if (err) {
+                                    console.log(err);
+                                    callback(new Error("Error de conexión a la base de datos2"));
+                                }
+                            });
+                        }
+
                         callback(null);
                     }
                 });
             }
         });
     }
-    likeAnswer(idUser, idAnswer, callback) {
+    insertView(idUser, idQuestion, callback) {
         this.pool.getConnection(function (err, connection) {
             if (err) {
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                const sql = "INSERT INTO voteanswer(idAnswer, idUser, type) VALUES (?,?,1) ON DUPLICATE KEY UPDATE type = 1";
-                connection.query(sql, [idAnswer, idUser],
-                function (err) {
+                const sql ="SELECT * FROM visit WHERE idUser = ? AND idQuestion = ?";
+                connection.query(sql, [idUser, idQuestion], 
+                function(err, rows) {
                     if (err) {
-                        callback(new Error("Error de acceso a la base de datos1"));
+                        callback(new Error("Error en la base de datos 1"));
                     }
                     else {
+                        if(typeof rows[0] !== 'undefined') {
+                            const sql1 = "INSERT INTO visit(idUser, idQuestion) VALUES (?,?) ON DUPLICATE KEY UPDATE idUser = ?";
+                            connection.query(sql1, [idUser, idQuestion, idUser], function(err){
+                                if(err) {
+                                    callback(new Error("Error en la base de datos 1"));
+                                }
+                                else{
+                                    const sql2 = "UPDATE question SET question.views = question.views + 1 WHERE question.id = ?";
+                                    connection.query(sql2, [idQuestion], function (err) {
+                                        if(err) callback(new Error("Error en la base de datos 2"));
+                                    })
+                                }
+                            });
+                        }
                         callback(null);
                     }
                 });
             }
         });
     }
-    dislikeAnswer(idUser, idAnswer, callback) {
+    checkMedalsViews(idUser, idQuestion, callback) {
         this.pool.getConnection(function (err, connection) {
             if (err) {
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                const sql = "INSERT INTO voteanswer(idAnswer, idUser, type) VALUES (?,?,-1) ON DUPLICATE KEY UPDATE type = -1";
-                connection.query(sql, [idAnswer, idUser],
-                function (err) {
-                    if (err) {
+                const sql = "SELECT * FROM question WHERE question.id = ?";
+                connection.query(sql, [idQuestion], function(err, rows) {
+                    if(err) {
                         callback(new Error("Error de acceso a la base de datos1"));
                     }
                     else {
+                        var type;
+                        var description;
+                        var add = true;
+                        if(rows[0].views === 2) {
+                            type = "bronce";
+                            description = "Pregunta popular";
+                        }
+                        else if (rows[0].views === 4) {
+                            type = "plata";
+                            description = "Pregunta destacada";
+                        }
+                        else if (rows[0].views === 6) {
+                            type = "oro";
+                            description = "Pregunta famosa";
+                        }
+                        else {
+                            add = false;
+                        }
+
+                        if(add) {
+                            const sql2 = "INSERT INTO medals(idUser, idElement, type, description) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE type = type";
+                            connection.query(sql2, [idUser, idQuestion, type, description], function(err) {
+                                if (err) {
+                                    console.log(err);
+                                    callback(new Error("Error de conexión a la base de datos2"));
+                                }
+                            });
+                        }
+
                         callback(null);
                     }
                 });

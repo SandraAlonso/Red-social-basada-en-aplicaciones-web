@@ -1,7 +1,7 @@
 "use strict";
 
-const mysql = require("mysql");
-
+const utils = require("../utils");
+const ut = new utils;
 
 class DAOUsers {
     constructor(pool) {
@@ -84,7 +84,7 @@ class DAOUsers {
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                connection.query("SELECT email, name, img, SignUpDate FROM user WHERE id = ?",
+                connection.query("SELECT email, name, img, UNIX_TIMESTAMP(SignUpDate) AS date FROM user WHERE id = ?",
                     [id],
                     function (err, rows) {
                         connection.release(); // devolver al pool la conexión
@@ -96,8 +96,8 @@ class DAOUsers {
                                 callback(new Error("No existe el usuario en la base de datos")); //no está el usuario con el password proporcionado
                             }
                             else {
-                                var resultArray = Object.values(JSON.parse(JSON.stringify(rows)))
-                                callback(null, resultArray);
+                                rows[0].date = ut.createDate(rows[0].date);
+                                callback(null, rows[0]);
                             }
                         }
                     });
@@ -140,9 +140,7 @@ class DAOUsers {
                 callback(new Error("Error de conexión a la base de datos1"));
             }
             else {
-                connection.query("SELECT u.name, u.img, q.likes, q.dislikes, t.tag FROM user u LEFT JOIN question q ON q.idUser = u.id LEFT JOIN tags t ON t.idQuestion = q.id WHERE u.id != ? ORDER BY u.name ASC",
-
-                    [id],
+                connection.query("SELECT u.name, u.img, SUM(q.likes) over (PARTITION by q.idUser) AS likes, SUM(q.dislikes) over (PARTITION by q.idUser) AS dislikes, t.tag FROM user u LEFT JOIN question q ON q.idUser = u.id LEFT JOIN tags t ON t.idQuestion = q.id ORDER BY u.name ASC",
                     function (err, rows) {
                         if (err) {
                             callback(new Error("Error de acceso a la base de dato2s"));
@@ -152,21 +150,33 @@ class DAOUsers {
                             var tags = [];
                             var contTags = [];
                             var resultArray = Object.values(JSON.parse(JSON.stringify(rows)))
-                            var score = 1;
-                            if (resultArray.resultArray != 0) {
+                            if (resultArray.length != 0) {
                                 var suma = 0;
+                                var i;
                                 var ant = resultArray[0];
-                                for (let i of resultArray) {
-                                    if (i.name != ant.name) {
+                                for (let a = 0; a <= resultArray.length; a++) {
+                                    i = resultArray[a];
+                                    if (typeof i === 'undefined' || i.name != ant.name) {
                                         //Calculo de puntuacion
+                                        suma = (ant.likes * 10 - ant.dislikes * 2);
                                         if (suma == 0)
                                             suma = 1;
-                                        ant.puntuacion = suma;
+                                        ant.score = suma;
                                         delete ant.likes;
                                         delete ant.dislikes;
                                         suma = 0;
 
                                         //Calculo de tag mas usado
+                                        if (typeof i === 'undefined') {
+                                            var index = tags.indexOf(ant.tag);
+                                            if (index == -1) {//nueva tag
+                                                tags.push(ant.tag);
+                                                contTags[tags.length - 1]++;
+                                            }
+                                            else {
+                                                contTags[index]++;
+                                            }
+                                        }
                                         var max = 0;
                                         var index = 0;
                                         for (let j of contTags) {
@@ -179,21 +189,20 @@ class DAOUsers {
                                         tags = [];
                                         result.push(ant);
                                     }
-                                    var index = tags.indexOf(i.tag);
-                                    if (index == -1) {//nueva tag
-                                        tags.push(i.tag);
-                                        contTags[tags.length - 1]++;
-                                    }
                                     else {
-                                        contTags[index]++;
+                                        var index = tags.indexOf(i.tag);
+                                        if (index == -1) {//nueva tag
+                                            tags.push(i.tag);
+                                            contTags[tags.length - 1]++;
+                                        }
+                                        else {
+                                            contTags[index]++;
+                                        }
                                     }
-                                    suma += (i.likes * 10 - i.dislikes * 2);
                                     ant = i;
                                 }
-                                callback(null, result);
-
                             }
-
+                            callback(null, result);
                         }
                     });
             }
@@ -236,10 +245,6 @@ class DAOUsers {
                                         }
                                     }
                                 );
-
-
-
-
                             }
                         }
                     });
@@ -277,7 +282,7 @@ class DAOUsers {
                 callback(new Error("Error de conexión a la base de datos1"));
             }
             else {
-                connection.query("SELECT q.id FROM question q LEFT JOIN visit v ON v.idQuestion = q.id WHERE q.idUser = ?",
+                connection.query("SELECT q.id FROM question q LEFT JOIN visit v ON v.idQuestion = q.id WHERE q.idUser = ?  ORDER BY q.id ASC",
                     [id],
                     function (err, rows) {
                         if (err) {
@@ -291,20 +296,21 @@ class DAOUsers {
                             var v = 1;
                             var visitedQuestion = Object.values(JSON.parse(JSON.stringify(rows)));
                             var ant;
-                            for (let i of visitedQuestion) {
+                            var i;
+                            for (let a = 0; a<visitedQuestion.length ;a++) {
+                                i= visitedQuestion[a];
                                 if (typeof ant === 'undefined' || i.id == ant.id) {
                                     v++;
                                 }
-                                else {
-
-                                    if (v => 2 && v < 4) {
+                                if((typeof ant !== 'undefined' && i.id != ant.id )|| a == visitedQuestion.length-1 ){ 
+                                    if (v >= 2 && v < 4) {
                                         result.bronze++;
                                     }
-                                    else if (v => 4 && v < 6) {
+                                    else if (v >= 4 && v < 6) {
                                         result.silver++;
 
                                     }
-                                    else if (v => 6) {
+                                    else if (v >= 6) {
                                         result.gold++;
 
                                     }

@@ -166,6 +166,7 @@ app.post("/create-user", upload.single('file'), function (request, response) {
     }
 });
 
+app.get('/users', accesscontrol);
 app.get("/users", function (request, response) {
     daoUser.getUser(request.session.currentUser, function (err, result) {
         if (err) {
@@ -194,10 +195,11 @@ app.get("/users", function (request, response) {
                                         else {
                                             daoUser.getVotedAnswer(request.session.currentUser, function (err, result6) {
                                                 if (err) {
-                                                    response.render("users", { errorMsg: err.message });
+                                                    console.log(result);
+                                                    //TODO response.render("users", { errorMsg: null, aVoted: result6, qVoted: result5, visited: result4, score: result3, numQuestion: result2.q[0].quest, numAnswer: result2.a[0].ans, name: result[0].name, email: result[0].name, img: result[0].img, sud: result[0].SignUpDate.substring(0, 10) });
                                                 }
                                                 else {
-                                                    response.render("users", { errorMsg: null, aVoted: result6, qVoted: result5, visited: result4, score: result3, numQuestion: result2.q[0].quest, numAnswer: result2.a[0].ans, name: result[0].name, email: result[0].name, img: result[0].img, sud: result[0].SignUpDate.substring(0, 10) });
+                                                    response.render("users", { errorMsg: null, aVoted: result6, qVoted: result5, visited: result4, score: result3, numQuestion: result2.q[0].quest, numAnswer: result2.a[0].ans, name: result.name, email: result.name, sud: result.date });
                                                 }
                                             })
                                         }
@@ -291,6 +293,27 @@ app.get('/user-search', function (request, response) {
 
 app.get('/question/:id', accesscontrol);
 app.get('/question/:id', function (request, response, next) {
+    daoQuestion.insertView(request.session.currentUser, request.params.id, function (err, result) {
+        if (err) {
+            response.render("question", { errorMsg: err.message, question: null, answers: null });
+        }
+        else {
+            next();
+        }
+    })
+});
+
+app.get('/question/:id', function (request, response, next) {
+    daoQuestion.checkMedalsViews(request.session.currentUser, request.params.id, function (err, result) {
+        if (err) {
+            response.render("question", { errorMsg: err.message, question: null, answers: null });
+        }
+        else {
+            next();
+        }
+    })
+});
+app.get('/question/:id', function (request, response, next) {
     daoQuestion.getQuestion(request.params.id, function (err, result) {
         if (err) {
             response.render("question", { errorMsg: err.message, question: null, answers: null });
@@ -308,11 +331,12 @@ app.get('/question/:id', function (request, response) {
             response.render("question", { errorMsg: err.message, question: null, answers: null});
         }
         else {
-            console.log(result);
             response.render("question", { errorMsg: null, question: request.question, answers: result})
         }
     })
 });
+
+
 
 app.post('/question/:id', accesscontrol);
 app.post('/question/:id', function (request, response) {
@@ -320,66 +344,72 @@ app.post('/question/:id', function (request, response) {
         if (err) {
             //TODO FALTA CONTROL DE ESTE ERROR
             console.log(err);
-            response.redirect("/question/" + request.params.id);
         }
-        else {
-            response.redirect("/question/" + request.params.id);
-        }
+        response.redirect("/question/" + request.params.id);
     })
 });
 
-app.get('/question/:id/like-question/', accesscontrol);
-app.get('/question/:id/like-question/', function(request, response) {
-    daoQuestion.likeQuestion(request.session.currentUser, request.params.id, function(err) {
+app.get('/question/:id/like-question', accesscontrol);
+app.get('/question/:id/like-question', function(request, response, next) {
+    daoQuestion.likeQuestion(request.session.currentUser, request.params.id, 1, function(err) {
         if (err) {
             //TODO FALTA CONTROL DE ESTE ERROR
             console.log(err);
-            response.redirect("/question/" + request.params.id);
         }
-        else {
-            response.redirect("/question/" + request.params.id);
-        }
+        next();
     })
 });
 
-app.get('/question/:id/dislike-question/', accesscontrol);
-app.get('/question/:id/dislike-question/', function(request, response) {
-    daoQuestion.dislikeQuestion(request.session.currentUser, request.params.id, function(err) {
+
+app.get('/question/:id/like-question', function(request, response) {
+    daoQuestion.checkMedals(request.session.currentUser, request.params.id, function(err) {
         if (err) {
             //TODO FALTA CONTROL DE ESTE ERROR
             console.log(err);
-            response.redirect("/question/" + request.params.id);
         }
-        else {
-            response.redirect("/question/" + request.params.id);
+        response.redirect("/question/" + request.params.id);
+    })
+});
+
+app.get('/question/:id/dislike-question', accesscontrol);
+app.get('/question/:id/dislike-question', function(request, response, next) {
+    daoQuestion.likeQuestion(request.session.currentUser, request.params.id, -1, function(err) {
+        if (err) {
+            //TODO FALTA CONTROL DE ESTE ERROR
+            console.log(err);
         }
+        response.redirect("/question/" + request.params.id);
     })
 });
 
 app.get('/question/:id/like-answer/:idAns', accesscontrol);
-app.get('/question/:id/like-answer/:idAns', function(request, response) {
-    daoQuestion.likeAnswer(request.session.currentUser, request.params.idAns, function(err) {
+app.get('/question/:id/like-answer/:idAns', function(request, response, next) {
+    daoQuestion.likeAnswer(request.session.currentUser, request.params.idAns, 1, function(err) {
         if (err) {
             //TODO FALTA CONTROL DE ESTE ERROR
             console.log(err);
-            response.redirect("/question/" + request.params.id);
         }
-        else {
-            response.redirect("/question/" + request.params.id);
+        next();
+    })
+});
+
+app.get('/question/:id/like-answer/:idAns', function(request, response) {
+    daoQuestion.checkMedals(request.session.currentUser, request.params.id, function(err) {
+        if (err) {
+            //TODO FALTA CONTROL DE ESTE ERROR
+            console.log(err);
         }
+        response.redirect("/question/" + request.params.id);
     })
 });
 
 app.get('/question/:id/dislike-answer/:idAns', accesscontrol);
 app.get('/question/:id/dislike-answer/:idAns', function(request, response) {
-    daoQuestion.dislikeAnswer(request.session.currentUser, request.params.idAns, function(err) {
+    daoQuestion.likeAnswer(request.session.currentUser, request.params.idAns, -1, function(err) {
         if (err) {
             //TODO FALTA CONTROL DE ESTE ERROR
             console.log(err);
-            response.redirect("/question/" + request.params.id);
         }
-        else {
-            response.redirect("/question/" + request.params.id);
-        }
+        response.redirect("/question/" + request.params.id);
     })
 });
