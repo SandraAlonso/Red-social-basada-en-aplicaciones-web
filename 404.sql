@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost
--- Tiempo de generación: 08-01-2021 a las 12:06:22
+-- Tiempo de generación: 13-01-2021 a las 04:38:42
 -- Versión del servidor: 10.4.16-MariaDB
 -- Versión de PHP: 7.4.12
 
@@ -32,9 +32,23 @@ CREATE TABLE `answer` (
   `idUser` int(11) NOT NULL,
   `idQuestion` int(11) NOT NULL,
   `body` text NOT NULL,
-  `date` date NOT NULL,
-  `likes` int(11) NOT NULL,
-  `dislikes` int(11) NOT NULL
+  `date` datetime NOT NULL DEFAULT current_timestamp(),
+  `likes` int(11) NOT NULL DEFAULT 0,
+  `dislikes` int(100) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `medals`
+--
+
+CREATE TABLE `medals` (
+  `idUser` int(100) NOT NULL,
+  `idElement` int(100) NOT NULL,
+  `type` varchar(100) NOT NULL,
+  `description` varchar(100) NOT NULL,
+  `date` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -50,7 +64,8 @@ CREATE TABLE `question` (
   `body` text NOT NULL,
   `date` datetime NOT NULL DEFAULT current_timestamp(),
   `likes` int(100) NOT NULL DEFAULT 0,
-  `dislikes` int(100) NOT NULL DEFAULT 0
+  `dislikes` int(100) NOT NULL DEFAULT 0,
+  `views` int(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -89,7 +104,7 @@ CREATE TABLE `user` (
   `name` varchar(100) NOT NULL,
   `password` varchar(100) NOT NULL,
   `img` varchar(100) DEFAULT NULL,
-  `signupdate` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `signupdate` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -106,13 +121,13 @@ CREATE TABLE `visit` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `voteanwer`
+-- Estructura de tabla para la tabla `voteanswer`
 --
 
-CREATE TABLE `voteanwer` (
+CREATE TABLE `voteanswer` (
   `idUser` int(11) NOT NULL,
   `idAnswer` int(11) NOT NULL,
-  `Type` tinyint(4) NOT NULL
+  `type` tinyint(4) NOT NULL COMMENT '1 es positivo -1 negativo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -124,7 +139,7 @@ CREATE TABLE `voteanwer` (
 CREATE TABLE `votequestion` (
   `idUser` int(11) NOT NULL,
   `idQuestion` int(11) NOT NULL,
-  `type` tinyint(4) NOT NULL COMMENT '1 es voto negativo y 0 voto positivo'
+  `type` tinyint(4) NOT NULL COMMENT '1 es voto positivo y -1 voto negativo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -136,6 +151,12 @@ CREATE TABLE `votequestion` (
 --
 ALTER TABLE `answer`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `medals`
+--
+ALTER TABLE `medals`
+  ADD PRIMARY KEY (`idUser`,`type`,`description`,`idElement`) USING BTREE;
 
 --
 -- Indices de la tabla `question`
@@ -169,6 +190,12 @@ ALTER TABLE `visit`
   ADD PRIMARY KEY (`idUser`,`idQuestion`);
 
 --
+-- Indices de la tabla `voteanswer`
+--
+ALTER TABLE `voteanswer`
+  ADD PRIMARY KEY (`idUser`,`idAnswer`);
+
+--
 -- Indices de la tabla `votequestion`
 --
 ALTER TABLE `votequestion`
@@ -182,25 +209,25 @@ ALTER TABLE `votequestion`
 -- AUTO_INCREMENT de la tabla `answer`
 --
 ALTER TABLE `answer`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `question`
 --
 ALTER TABLE `question`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT de la tabla `tags`
 --
 ALTER TABLE `tags`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
