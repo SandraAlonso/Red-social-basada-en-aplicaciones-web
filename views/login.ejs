@@ -17,9 +17,9 @@
 <%- include ('partials/head.ejs') %>
 <body>
 
-<%- include ('partials/header-no-login.ejs') %>
+    <div class="content">
+        <%- include ('partials/header-no-login.ejs') %>
 
-<body>
 <article>
     <h2 class="account-title">Iniciar sesión</h2>
     <form action="/login" method="POST">
@@ -39,10 +39,7 @@
         <% } %>
 
 </article>
-</body>
+</div>
 <%- include ('partials/footer.ejs') %>
-
-   
 </body>
-
 </html>

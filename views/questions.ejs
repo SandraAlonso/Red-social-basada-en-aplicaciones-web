@@ -3,6 +3,7 @@
 
 <%- include ('partials/head.ejs') %>
 <body>
+<div class="content">
 <%- include ('partials/header.ejs') %>
     <article>
     <%- include ('partials/search.ejs') %>
@@ -26,12 +27,7 @@
                     <h3>
                         <a href="/question/<%= question.id %>"><%= question.title %></a>
                     </h3>
-                    <p>
-                        <%= question.body %>
-                        <% if(question.body.length === 150) { %>
-                            ...
-                        <% }; %>
-                    </p>
+                    <p><%= question.body %><% if(question.body.length === 150) {%>...<% }; %></p>
                     <div class="tag-container">
                         <% if(question.tags) { question.tags.forEach(function(tag) { %>
                        <a class="tag" href = "/questionTagFilter/<%= tag %>"><%= tag %></span></a>
@@ -51,7 +47,7 @@
         </ul>
     </div>
 </article>
-
+</div>
 <%- include ('partials/footer.ejs') %>
 
 </body>

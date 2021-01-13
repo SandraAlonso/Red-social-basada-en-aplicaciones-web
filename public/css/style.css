@@ -333,14 +333,14 @@ a{
 }
 
 .tag-container {
-    margin-top: 20px;
+    padding-top: 30px;;
 }
 
 .card-left {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    padding: 30px;
+    padding-right: 30px;
     width: 86%;
 }
 
@@ -446,4 +446,8 @@ textarea {
 
 .error-page-img {
     margin: 50px 0;
+}
+
+.content {
+    min-height: calc(100vh - 99px);
 }
