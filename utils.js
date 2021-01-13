@@ -15,7 +15,7 @@ class utils {
         texto = texto.trim();
 
         //Reconocimiento de tags
-        var tag = texto.match(/@[A-ü]+/g);//busqueda de los elementos que empiecen por @
+        var tag = texto.match(/@[A-ü0-9]+/g);//busqueda de los elementos que empiecen por @
         if(tag !== null) {
             questions = tag.map(o => o.substring(1));//Recorremos el array y quitamos el primer caracter: "@"
         }

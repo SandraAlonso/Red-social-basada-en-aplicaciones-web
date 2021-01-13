@@ -303,7 +303,7 @@ app.post('/make-question', function (request, response) {
     question.title = request.body.title;
     question.body = request.body.body;
     question.tags = ut.createQuestion(request.body.tags);
-
+    console.log(question);
     daoQuestion.insertQuestion(request.session.currentUser, question, function (error) {
         if (error) { // error de acceso a la base de datos
             response.status(500);

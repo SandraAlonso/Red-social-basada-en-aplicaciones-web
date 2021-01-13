@@ -23,8 +23,10 @@ class DAOTasks {
                             if(question.tags !== null) {
                                 const sql = "INSERT INTO tags(idQuestion, tag) VALUES ?";
                                 var values = new Array;
-                                for (var i = 0; i < 5; i++) {
+                                for (var i = 0; i < 5 && i< question.tags.length; i++) {
                                     values.push([rows.insertId, question.tags[i]]);
+                                    console.log("entro");
+                                    console.log(values);
                                 }
                                 connection.query(sql, [values],
                                     function (err) {
