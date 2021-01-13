@@ -226,8 +226,8 @@ class DAOTasks {
                                 }
                             });
                         }
-                        connection.release(); // devolver al pool la conexión
-                        callback(null); 
+                            connection.release(); // devolver al pool la conexión
+                            callback(null); 
                     }
                 });
             }
@@ -268,7 +268,7 @@ class DAOTasks {
                         else {
                             add = false;
                         }
-
+                        console.log("hola");
                         if(add) {
                             const sql2 = "INSERT INTO medals(idUser, idElement, type, description) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE type = type";
                             connection.query(sql2, [idUser, idQuestion, type, description], function(err) {
@@ -313,7 +313,6 @@ class DAOTasks {
                                     if(value === 1) sql3 = "UPDATE answer SET answer.likes = answer.likes + ?, answer.dislikes = answer.dislikes + ? WHERE answer.id = ?";
                                     else sql3 = "UPDATE answer SET answer.dislikes = answer.dislikes + ?, answer.likes = answer.likes + ? WHERE answer.id = ?";
                                     connection.query(sql3, [Math.abs(value), plus, idAnswer], function(err) {
-                                        connection.release(); // devolver al pool la conexión
                                         if(err) {
                                             connection.release(); // devolver al pool la conexión
                                             callback(new Error("Error de acceso a la base de datos2"));
