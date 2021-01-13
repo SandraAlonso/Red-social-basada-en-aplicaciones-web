@@ -90,7 +90,7 @@ class DAOUsers {
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                connection.query("SELECT email, name, UNIX_TIMESTAMP(SignUpDate) AS date FROM user WHERE id = ?",
+                connection.query("SELECT id, email, img, name, UNIX_TIMESTAMP(SignUpDate) AS date FROM user WHERE id = ?",
                     [id],
                     function (err, rows) {
                         if (err) {
@@ -150,7 +150,7 @@ class DAOUsers {
                 callback(new Error("Error de conexión a la base de datos1"));
             }
             else {
-                connection.query("SELECT u.name, u.img, SUM(q.likes) over (PARTITION by q.idUser) AS likes, SUM(q.dislikes) over (PARTITION by q.idUser) AS dislikes, t.tag FROM user u LEFT JOIN question q ON q.idUser = u.id LEFT JOIN tags t ON t.idQuestion = q.id ORDER BY u.name ASC",
+                connection.query("SELECT u.id, u.name, u.img, SUM(q.likes) over (PARTITION by q.idUser) AS likes, SUM(q.dislikes) over (PARTITION by q.idUser) AS dislikes, t.tag FROM user u LEFT JOIN question q ON q.idUser = u.id LEFT JOIN tags t ON t.idQuestion = q.id ORDER BY u.name ASC",
                     function (err, rows) {
                         if (err) {
                             connection.release(); // devolver al pool la conexión

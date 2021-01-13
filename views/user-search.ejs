@@ -26,6 +26,7 @@
                     <% if (users) { users.forEach(function(users) { %>
                         <div class="user-data">
                             <img class="userPhoto" src="./user_imgs/<%= users.img %>" alt="imagen de perfil">
+                            <a href="/users/<%= users.id %>">
                             <span>
                                 <%= users.name %>
                             </span>

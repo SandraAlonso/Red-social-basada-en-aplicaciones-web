@@ -70,6 +70,7 @@ function accesscontrol(request, response, next) {
     if (typeof request.session.currentUser !== 'undefined') {
         response.locals.userEmail = request.session.userEmail;
         response.locals.userName = request.session.userName;
+        response.locals.userId= request.session.currentUser;
         next();
     }
     else {
@@ -166,9 +167,9 @@ app.post("/create-user", upload.single('file'), function (request, response) {
     }
 });
 
-app.get('/users', accesscontrol);
-app.get("/users", function (request, response, next) {
-    daoUser.getUser(request.session.currentUser, function (err, result) {
+app.get('/users/:id', accesscontrol);
+app.get("/users/:id", function (request, response, next) {
+    daoUser.getUser(request.params.id, function (err, result) {
         if (err) {
             response.render("users", { errorMsg: err.message });
         }
@@ -180,8 +181,8 @@ app.get("/users", function (request, response, next) {
 });
 
 
-app.get("/users", function (request, response, next) {
-    daoUser.getQAFromUser(request.session.currentUser, function (err, result) {
+app.get("/users/:id", function (request, response, next) {
+    daoUser.getQAFromUser(request.params.id, function (err, result) {
         if (err) {
             response.render("users", { errorMsg: err.message });
         }
@@ -193,8 +194,8 @@ app.get("/users", function (request, response, next) {
     }
     )
 });
-app.get("/users", function (request, response, next) {
-    daoUser.getUserScore(request.session.currentUser, function (err, result) {
+app.get("/users/:id", function (request, response, next) {
+    daoUser.getUserScore(request.params.id, function (err, result) {
         if (err) {
             response.render("users", { errorMsg: err.message });
         }
@@ -205,12 +206,13 @@ app.get("/users", function (request, response, next) {
     })
 });
 
-app.get("/users", function (request, response) {
-    daoUser.getMedals(request.session.currentUser, function(err, result){
+app.get("/users/:id", function (request, response) {
+    daoUser.getMedals(request.params.id, function(err, result){
         if(err)
         response.render("users", { errorMsg: err.message , medals: null, score: null, questionAnswer: null, user: null});
     
     else{
+        console.log(request.user.img)
         response.render("users", { errorMsg: null, medals: result, score: request.score, questionAnswer: request.questionAnswer, user: request.user });
     }
     })
