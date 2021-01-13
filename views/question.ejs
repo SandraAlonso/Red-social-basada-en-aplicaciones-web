@@ -25,14 +25,18 @@
                 <p><%= question.body %></p>
                 <div class="tag-container">
                     <% if(question.tags) { question.tags.forEach(function(tag) { %>
-                        <span class="tag"><%= tag %></span>
+                        <a href="/questionTagFilter/<%= tag %>">
+                            <span class="tag"><%= tag %></span>
+                        </a>
                     <% })}; %>
                 </div>
             </div>
             <div class="card-right">
                 <p>Formulada el <%= question.date %></p>
                 <img src="/user_imgs/<%= question.img %>">
-                <span><%= question.name %></span>
+                <a href="/users/<%= question.userId %>">
+                    <span><%= question.name %></span>
+                </a>
             </div>
         </div>
 
@@ -60,7 +64,9 @@
                 <div class="card-right">
                     <p>Formulada el <%= answer.date %></p>
                     <img src="/user_imgs/<%= answer.img %>">
-                    <span><%= answer.name %></span>
+                    <a href="/users/<%= answer.userId %>">
+                        <span><%= answer.name %></span>
+                    </a>
                 </div>
             </li>
             <% }); %>
@@ -75,7 +81,7 @@
 
     <h3 class="number-answers">Tu respuesta</h3>
     <form class="form-answer" method="POST">
-        <textarea name="answer" placeholder="Introduce aquí tu respuesta"></textarea>
+        <textarea name="answer" placeholder="Introduce aquí tu respuesta" required></textarea>
         <input type="submit" value="Enviar">
     </form>
 </article>

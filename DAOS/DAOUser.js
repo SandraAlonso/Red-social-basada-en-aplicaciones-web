@@ -16,15 +16,17 @@ class DAOUsers {
                 connection.query("SELECT * FROM user WHERE email = ? AND password = ?",
                     [email, password],
                     function (err, rows) {
-                        connection.release(); // devolver al pool la conexión
                         if (err) {
+                            connection.release(); // devolver al pool la conexión
                             callback(new Error("Error de acceso a la base de datos"));
                         }
                         else {
                             if (rows.length === 0) {
+                                connection.release(); // devolver al pool la conexión
                                 callback(null, false); //no está el usuario con el password proporcionado
                             }
                             else {
+                                connection.release(); // devolver al pool la conexión
                                 callback(null, rows[0]);
                             }
                         }
@@ -43,9 +45,8 @@ class DAOUsers {
                 connection.query("SELECT * FROM user WHERE email = ?",
                     [email],
                     function (err, rows) {
-                        connection.release(); // devolver al pool la conexión
                         if (err) {
-
+                            connection.release(); // devolver al pool la conexión
                             callback(new Error("Error de acceso a la base de datos"));
                         }
                         else {
@@ -53,22 +54,27 @@ class DAOUsers {
                                 if (rows.length === 0) {
                                     const sql = "INSERT INTO user(email, name, password, img) VALUES (?,?,?,?)";
                                     connection.query(sql, [email, name, password, file],
-                                        function (err, rows) {
+                                        function (err) {
                                             if (err) {
+                                                connection.release(); // devolver al pool la conexión
                                                 callback(new Error("Error en la insercción en la base de datos"));
                                             }
                                             else {
+                                                connection.release(); // devolver al pool la conexión
                                                 callback(null, true);
                                             }
                                         }
                                     );
                                 }
                                 else {
+                                    connection.release(); // devolver al pool la conexión
                                     callback(new Error("El correo que ha introducido ya pertenece a un usuario de la aplicación.")); //ya está el usuario en la bd
                                 }
                             }
-                            else
+                            else {
+                                connection.release(); // devolver al pool la conexión
                                 callback(new Error("Las contraseñas no coinciden."));
+                            }
 
                         }
 
@@ -87,16 +93,18 @@ class DAOUsers {
                 connection.query("SELECT email, name, UNIX_TIMESTAMP(SignUpDate) AS date FROM user WHERE id = ?",
                     [id],
                     function (err, rows) {
-                        connection.release(); // devolver al pool la conexión
                         if (err) {
+                            connection.release(); // devolver al pool la conexión
                             callback(new Error("Error de acceso a la base de datos"));
                         }
                         else {
                             if (rows.length === 0) {
+                                connection.release(); // devolver al pool la conexión
                                 callback(new Error("No existe el usuario en la base de datos")); //no está el usuario con el password proporcionado
                             }
                             else {
                                 rows[0].date = ut.createDate(rows[0].date);
+                                connection.release(); // devolver al pool la conexión
                                 callback(null, rows[0]);
                             }
                         }
@@ -115,15 +123,17 @@ class DAOUsers {
                 connection.query("SELECT img FROM user WHERE id = ?",
                     [id],
                     function (err, rows) {
-                        connection.release(); // devolver al pool la conexión
                         if (err) {
+                            connection.release(); // devolver al pool la conexión
                             callback(new Error("Error de acceso a la base de datos"));
                         }
                         else {
                             if (rows.length === 0) {
+                                connection.release(); // devolver al pool la conexión
                                 callback(new Error("No existe el usuario"));
                             }
                             else {
+                                connection.release(); // devolver al pool la conexión
                                 callback(null, rows[0].img);
                             }
                         }
@@ -143,6 +153,7 @@ class DAOUsers {
                 connection.query("SELECT u.name, u.img, SUM(q.likes) over (PARTITION by q.idUser) AS likes, SUM(q.dislikes) over (PARTITION by q.idUser) AS dislikes, t.tag FROM user u LEFT JOIN question q ON q.idUser = u.id LEFT JOIN tags t ON t.idQuestion = q.id ORDER BY u.name ASC",
                     function (err, rows) {
                         if (err) {
+                            connection.release(); // devolver al pool la conexión
                             callback(new Error("Error de acceso a la base de dato2s"));
                         }
                         else {
@@ -202,7 +213,7 @@ class DAOUsers {
                                     ant = i;
                                 }
                             }
-                            
+                            connection.release(); // devolver al pool la conexión
                             callback(null, result);
                         }
                     });
@@ -220,12 +231,13 @@ class DAOUsers {
                 connection.query("SELECT COUNT(*) AS quest FROM question q WHERE q.idUser = ?",
                     [id],
                     function (err, rows) {
-                        connection.release(); // devolver al pool la conexión
                         if (err) {
+                            connection.release(); // devolver al pool la conexión
                             callback(new Error("Error de acceso a la base de datos"));
                         }
                         else {
                             if (rows.length === 0) {
+                                connection.release(); // devolver al pool la conexión
                                 callback(new Error("No existe el usuario en la base de datos")); //no está el usuario con el password proporcionado
                             }
                             else {
@@ -234,12 +246,14 @@ class DAOUsers {
                                 connection.query(sql, [id],
                                     function (err, rows2) {
                                         if (err) {
+                                            connection.release(); // devolver al pool la conexión
                                             callback(new Error("Error en el conteo de respuestas"));
                                         }
                                         else {
                                             var o = new Object();
                                             o.q = rows[0];
                                             o.a = rows2[0];
+                                            connection.release(); // devolver al pool la conexión
                                             callback(null, o);
                                         }
                                     }
@@ -261,12 +275,14 @@ class DAOUsers {
                     [id],
                     function (err, rows) {
                         if (err) {
+                            connection.release(); // devolver al pool la conexión
                             callback(new Error("Error de acceso a la base de dato2s"));
                         }
                         else {
                             let suma = 10 * rows[0].likes - 2 * rows[0].dislikes
                             if (suma <= 0)
                                 suma = 1;
+                                connection.release(); // devolver al pool la conexión
                             callback(null, suma);
 
                         }
@@ -288,6 +304,7 @@ class DAOUsers {
                     [id],
                     function (err, rows) {
                         if (err) {
+                            connection.release(); // devolver al pool la conexión
                             callback(new Error("Error de acceso a la base de dato2s"));
                         }
                         else {
@@ -310,6 +327,7 @@ class DAOUsers {
                                 else
                                     medalsResult.gold.push(o);
                             }
+                            connection.release(); // devolver al pool la conexión
                             callback(null, medalsResult);
                         }
                     }

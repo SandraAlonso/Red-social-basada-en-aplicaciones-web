@@ -23,7 +23,7 @@ class DAOTasks {
                             if(question.tags !== null) {
                                 const sql = "INSERT INTO tags(idQuestion, tag) VALUES ?";
                                 var values = new Array;
-                                for (var i = 0; i < question.tags.length; i++) {
+                                for (var i = 0; i < 5; i++) {
                                     values.push([rows.insertId, question.tags[i]]);
                                 }
                                 connection.query(sql, [values],
@@ -53,7 +53,7 @@ class DAOTasks {
                 callback(new Error("Error de conexión a la base de datos"));    
             }
             else {
-                connection.query("SELECT question.id, question.title, question.body, UNIX_TIMESTAMP(question.date) AS date, user.name, user.img, tags.tag FROM question LEFT JOIN tags ON question.id = tags.idQuestion JOIN user ON question.idUser = user.id ORDER BY question.date ASC",
+                connection.query("SELECT question.id, question.title, question.body, UNIX_TIMESTAMP(question.date) AS date, user.id AS userId, user.name, user.img, tags.tag FROM question LEFT JOIN tags ON question.id = tags.idQuestion JOIN user ON question.idUser = user.id ORDER BY question.date",
                 function (err, rows) {
                     if (err) {
                         connection.release();
@@ -75,6 +75,7 @@ class DAOTasks {
                                     question.body = value.body.substring(0, 150);
                                     question.date = ut.createDate(value.date);
                                     question.name = value.name;
+                                    question.userId = value.userId;
                                     question.img = value.img;
                                     question.tags = [];
                                     if(value.tag !== null) question.tags.push(value.tag);
@@ -95,7 +96,7 @@ class DAOTasks {
                 callback(new Error("Error de conexión a la base de datos"));    
             }
             else {
-                connection.query("SELECT question.id, question.title, question.body, question.likes, question.dislikes, question.views, UNIX_TIMESTAMP(question.date) AS date, user.name, user.img, tags.tag FROM question LEFT JOIN tags ON question.id = tags.idQuestion JOIN user ON question.idUser = user.id WHERE question.id = ?",
+                connection.query("SELECT question.id, question.title, question.body, question.likes, question.dislikes, question.views, UNIX_TIMESTAMP(question.date) AS date, user.id AS userId, user.name, user.img, tags.tag FROM question LEFT JOIN tags ON question.id = tags.idQuestion JOIN user ON question.idUser = user.id WHERE question.id = ?",
                 [id],
                 function (err, rows) {
                     if (err) {
@@ -122,6 +123,7 @@ class DAOTasks {
                                     question.likes = value.likes;
                                     question.dislikes = value.dislikes;
                                     question.views = value.views;
+                                    question.userId = value.userId;
                                     question.tags = [];
                                     if(value.tag !== null) question.tags.push(value.tag);
                                 }
@@ -140,7 +142,7 @@ class DAOTasks {
                 callback(new Error("Error de conexión a la base de datos"));    
             }
             else {
-                connection.query("SELECT answer.id, answer.body, UNIX_TIMESTAMP(answer.date) AS date, answer.likes, answer.dislikes, user.name, user.img FROM answer JOIN user ON answer.idUser = user.id WHERE answer.idQuestion = ?",
+                connection.query("SELECT answer.id, answer.body, UNIX_TIMESTAMP(answer.date) AS date, answer.likes, answer.dislikes, user.name, user.id AS userId, user.img FROM answer JOIN user ON answer.idUser = user.id WHERE answer.idQuestion = ?",
                 [id],
                 function (err, rows) {
                     if (err) {
@@ -158,6 +160,7 @@ class DAOTasks {
                                 answer.date = date_js.getDate() + '/' + (date_js.getMonth() + 1) + '/' + date_js.getFullYear();
                                 answer.name = value.name;
                                 answer.likes = value.likes;
+                                answer.userId = value.userId;
                                 answer.dislikes = value.dislikes;
                                 answer.img = value.img;
                                 answers.push(answer);
@@ -227,7 +230,7 @@ class DAOTasks {
                             });
                         }
                             connection.release(); // devolver al pool la conexión
-                            callback(null); 
+                            callback(null);
                     }
                 });
             }

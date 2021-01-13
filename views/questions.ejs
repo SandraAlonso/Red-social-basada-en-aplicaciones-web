@@ -26,7 +26,12 @@
                     <h3>
                         <a href="/question/<%= question.id %>"><%= question.title %></a>
                     </h3>
-                    <p><%= question.body %></p>
+                    <p>
+                        <%= question.body %>
+                        <% if(question.body.length === 150) { %>
+                            ...
+                        <% }; %>
+                    </p>
                     <div class="tag-container">
                         <% if(question.tags) { question.tags.forEach(function(tag) { %>
                        <a class="tag" href = "/questionTagFilter/<%= tag %>"><%= tag %></span></a>
@@ -36,7 +41,10 @@
                 <div class="card-right">
                     <p>Formulada el <%= question.date %></p>
                     <img src="/user_imgs/<%= question.img %>">
-                    <span><%= question.name %></span>
+                    
+                    <a href="/users/<%= question.userId %>">
+                        <span><%= question.name %></span>
+                    </a>
                 </div>
             </li>
             <% })}; %>

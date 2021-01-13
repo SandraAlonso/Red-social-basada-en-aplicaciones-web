@@ -311,10 +311,10 @@ app.post('/make-question', function (request, response) {
         }
         else {
             response.status(200);
-            response.render("make-question",
-                { errorMsg: "Correcto" });
+            response.redirect("/questions");
         }
     });
+
 })
 
 app.get('/user-search', accesscontrol);
@@ -348,8 +348,6 @@ app.get('/question/:id', function (request, response, next) {
             response.render("question", { errorMsg: err.message, question: null, answers: null });
         }
         else {
-            console.log("hola2");
-
             next();
         }
     })
@@ -360,8 +358,6 @@ app.get('/question/:id', function (request, response, next) {
             response.render("question", { errorMsg: err.message, question: null, answers: null });
         }
         else {
-            console.log("hola3");
-
             request.question = result;
             next();
         }
