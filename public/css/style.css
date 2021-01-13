@@ -438,3 +438,12 @@ textarea {
     background-color: #9b0000;
     box-shadow: none;
 }
+
+.error-page {
+    margin: 50px 0;
+    text-align: center;
+}
+
+.error-page-img {
+    margin: 50px 0;
+}
