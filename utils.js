@@ -31,6 +31,15 @@ class utils {
     filterUserByName(users, str){
         return users.filter(n => n.name.includes(str));
     }
+
+    //Filtros de preguntas
+    filterByTag(questions, tag){
+        console.log(questions);
+        return questions.filter(o => o.tags.some(aux => tag == aux));
+    }
+    filterByText(questions, str){
+        return questions.filter(n => n.title.includes(str) || n.body.includes(str));
+    }
 }
 
 module.exports = utils

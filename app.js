@@ -280,7 +280,7 @@ app.get('/main', function (request, response) {
 
 app.get('/questions', accesscontrol);
 app.get('/questions', function (request, response) {
-    daoQuestion.getAllQuestions(request.session.currentUser, function (err, result) {
+    daoQuestion.getAllQuestions(function (err, result) {
         if (err) {
             response.render("questions", { errorMsg: err.message, questions: null });
         }
@@ -336,6 +336,7 @@ app.get('/question/:id', function (request, response, next) {
             response.render("question", { errorMsg: err.message, question: null, answers: null });
         }
         else {
+            console.log("hola1");
             next();
         }
     })
@@ -347,6 +348,8 @@ app.get('/question/:id', function (request, response, next) {
             response.render("question", { errorMsg: err.message, question: null, answers: null });
         }
         else {
+            console.log("hola2");
+
             next();
         }
     })
@@ -357,6 +360,8 @@ app.get('/question/:id', function (request, response, next) {
             response.render("question", { errorMsg: err.message, question: null, answers: null });
         }
         else {
+            console.log("hola3");
+
             request.question = result;
             next();
         }
@@ -369,6 +374,8 @@ app.get('/question/:id', function (request, response) {
             response.render("question", { errorMsg: err.message, question: null, answers: null });
         }
         else {
+            console.log("hola4");
+            
             response.render("question", { errorMsg: null, question: request.question, answers: result })
         }
     })
@@ -378,6 +385,8 @@ app.get('/question/:id', function (request, response) {
 
 app.post('/question/:id', accesscontrol);
 app.post('/question/:id', function (request, response) {
+    console.log("/question/" + request.params.id);
+
     daoQuestion.insertAnswer(request.session.currentUser, request.params.id, request.body.answer, function (err, result) {
         if (err) {
             //TODO FALTA CONTROL DE ESTE ERROR
@@ -385,6 +394,7 @@ app.post('/question/:id', function (request, response) {
         }
         response.redirect("/question/" + request.params.id);
     })
+
 });
 
 app.get('/question/:id/like-question', accesscontrol);
@@ -463,6 +473,46 @@ app.post('/userFilter', accesscontrol);
         else {
             var usersFiltered= ut.filterUserByName(result, request.body.filter);
             response.render("user-search", { errorMsg: null, users: usersFiltered });
+        }
+    })
+});
+//Filtrado de preguntas por texto
+app.post('/questionTextFilter', accesscontrol);
+	app.post('/questionTextFilter', function (request, response){
+    daoQuestion.getAllQuestions(function(err, result){
+        if (err) {
+            response.render("questions", { errorMsg: err.message, questions: null });
+        }
+        else {
+            var questionsFiltered= ut.filterByText(result, request.body.filter);
+            response.render("questions", { errorMsg: null, questions: questionsFiltered });
+        }
+    })
+});
+
+//Filtrado de preguntas sin respuesta
+app.get('/questionNoAnswerFilter', accesscontrol);
+	app.get('/questionNoAnswerFilter', function (request, response){
+    daoQuestion.questionNoAnswerFilter(function(err, result){
+        if (err) {
+            response.render("questions", { errorMsg: err.message, questions: null });
+        }
+        else {
+            response.render("questions", { errorMsg: null, questions: result });
+        }
+    })
+});
+
+//Filtrado de preguntas por texto
+app.get('/questionTagFilter/:tag', accesscontrol);
+	app.get('/questionTagFilter/:tag', function (request, response){
+    daoQuestion.getAllQuestions(function(err, result){
+        if (err) {
+            response.render("questions", { errorMsg: err.message, questions: null });
+        }
+        else {
+            var questionsFiltered= ut.filterByTag(result, request.params.tag);
+            response.render("questions", { errorMsg: null, questions: questionsFiltered });
         }
     })
 });

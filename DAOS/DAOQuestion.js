@@ -42,7 +42,7 @@ class DAOTasks {
             }
         });
     }
-    getAllQuestions(id, callback) {
+    getAllQuestions(callback) {
         this.pool.getConnection(function(err, connection) {
             if(err) {
                 callback(new Error("Error de conexión a la base de datos"));    
@@ -201,7 +201,6 @@ class DAOTasks {
                                 else {
                                     let sql3;
                                     let plus = typeof rows[0] === 'undefined' ? 0 : -Math.abs(value);
-                                    console.log(plus);
                                     if(value === 1) sql3 = "UPDATE question SET question.likes = question.likes + ?, question.dislikes = question.dislikes + ? WHERE question.id = ?";
                                     else sql3 = "UPDATE question SET question.dislikes = question.dislikes + ?, question.likes = question.likes + ? WHERE question.id = ?";
                                     connection.query(sql3, [Math.abs(value), plus, idQuestion], function(err) {
@@ -382,6 +381,7 @@ class DAOTasks {
                                 }
                             });
                         }
+
                         callback(null);
                     }
                 });
@@ -435,5 +435,29 @@ class DAOTasks {
             }
         });
     }
+
+
+    questionNoAnswerFilter(callback) {
+        this.pool.getConnection(function (err, connection) {
+            if (err) {
+                callback(new Error("Error de conexión a la base de datos"));
+            }
+            else {
+                const sql ="SELECT question.id, question.title, question.body, UNIX_TIMESTAMP(question.date) AS date, user.name, user.img, tags.tag FROM question LEFT JOIN tags ON question.id = tags.idQuestion JOIN user ON question.idUser = user.id WHERE NOT EXISTS (SELECT a.id FROM answer a where question.id = a.idQuestion) ORDER BY question.date ASC";
+                connection.query(sql, 
+                function(err, rows) {
+                    if (err) {
+                        callback(new Error("Error en la base de datos 1"));
+                    }
+                    else {
+                       callback(null, rows);
+                    }
+                });
+            }
+        });
+    }
+
+
+
 }
 module.exports = DAOTasks
