@@ -408,6 +408,7 @@ textarea {
     overflow: hidden;
     margin-bottom: 20px;
     outline:none;
+    white-space: pre-wrap;
 }
 
 .form-answer {
@@ -450,4 +451,8 @@ textarea {
 
 .content {
     min-height: calc(100vh - 99px);
+}
+
+.spaces{
+    white-space: pre-wrap;
 }

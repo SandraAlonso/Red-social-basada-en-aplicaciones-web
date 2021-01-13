@@ -515,7 +515,7 @@ app.get('/questionTagFilter/:tag', accesscontrol);
     })
 });
 
-app.use(function(req, res, next){
+/*app.use(function(req, res, next){
     var err = new Error('No encontrado');
     err.status = 404;
     next(err);
@@ -525,4 +525,4 @@ app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     if(err.status === 404) res.render('error', { title: 404, body: "Parece que te has perdido... O quizás te estás confundiendo... Tranquilo te acompañamos a casa"});
     else res.render('error', { title: 500, body: "Nuestro servidor está hoy un poco travieso... Un par de informáticos están revisando el error."});
-});
+});*/
