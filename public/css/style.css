@@ -335,6 +335,8 @@ a{
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
+    padding: 30px;
+    width: 86%;
 }
 
 .card-right {
@@ -344,6 +346,9 @@ a{
     align-items: center;
     border-left: 1px solid grey;
     padding-left: 15px;
+    text-align: center;
+    justify-content: center;
+    width: 13%;
 }
 
 .card img {
