@@ -272,7 +272,6 @@ class DAOTasks {
                         if(add) {
                             const sql2 = "INSERT INTO medals(idUser, idElement, type, description) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE type = type";
                             connection.query(sql2, [idUser, idQuestion, type, description], function(err) {
-                                connection.release(); // devolver al pool la conexión
                                 if (err) {
                                     connection.release(); // devolver al pool la conexión
                                     callback(new Error("Error de conexión a la base de datos2"));
