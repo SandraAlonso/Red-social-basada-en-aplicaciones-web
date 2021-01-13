@@ -480,13 +480,36 @@ class DAOTasks {
                 const sql ="SELECT question.id, question.title, question.body, UNIX_TIMESTAMP(question.date) AS date, user.name, user.img, tags.tag FROM question LEFT JOIN tags ON question.id = tags.idQuestion JOIN user ON question.idUser = user.id WHERE NOT EXISTS (SELECT a.id FROM answer a where question.id = a.idQuestion) ORDER BY question.date ASC";
                 connection.query(sql, 
                 function(err, rows) {
-                    connection.release(); // devolver al pool la conexión
                     if (err) {
+                        connection.release(); // devolver al pool la conexión
                         callback(new Error("Error en la base de datos 1"));
                     }
                     else {
-                       callback(null, rows);
-                    }
+                        var questions = [];
+                        if(rows.length != 0) {
+                            var count = 0;
+                            rows.forEach(function(value, index, array) {
+                                if(index > 0 && array[index - 1].id === value.id) {
+                                    count = count + 1;
+                                    questions[index - count].tags.push(value.tag);
+                                }
+                                else {
+                                    var question = new Object();
+                                    question.id = value.id;
+                                    question.title = value.title;
+                                    question.body = value.body.substring(0, 150);
+                                    question.date = ut.createDate(value.date);
+                                    question.name = value.name;
+                                    question.userId = value.userId;
+                                    question.img = value.img;
+                                    question.tags = [];
+                                    if(value.tag !== null) question.tags.push(value.tag);
+                                    questions.push(question);
+                                }
+                            })
+                        }
+                        connection.release();
+                        callback(null, questions);                    }
                 });
             }
         });

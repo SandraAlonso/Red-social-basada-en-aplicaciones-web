@@ -7,7 +7,7 @@
     <article>
     <%- include ('partials/search.ejs') %>
 
-        <h2>Usuarios</h2>
+        <h2><%= title %></h2>
 
         <form class="search" method = "POST" action = "/userFilter">
             <div class="search-box">
@@ -31,7 +31,9 @@
                             </span>
                             <span class="number"><%= users.score %></span>                            
                             <% if (users.tag!=null) { %>
-                            <span class="tag"><%= users.tag %></span>
+                            <a href="/questionTagFilter/<%= users.tag %>">
+                                <span class="tag"><%= users.tag %></span>
+                            </a>
                             <% } %>
                         </div>
                         <% })}; %>

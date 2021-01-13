@@ -282,10 +282,10 @@ app.get('/questions', accesscontrol);
 app.get('/questions', function (request, response) {
     daoQuestion.getAllQuestions(function (err, result) {
         if (err) {
-            response.render("questions", { errorMsg: err.message, questions: null });
+            response.render("questions", { errorMsg: err.message, questions: null, title: "Todas las preguntas" });
         }
         else {
-            response.render("questions", { errorMsg: null, questions: result });
+            response.render("questions", { errorMsg: null, questions: result, title: "Todas las preguntas" });
         }
     })
 });
@@ -321,10 +321,10 @@ app.get('/user-search', accesscontrol);
 app.get('/user-search', function (request, response) {
     daoUser.getAllUsers(function (err, result) {
         if (err) {
-            response.render("user-search", { errorMsg: err.message, users: null });
+            response.render("user-search", { errorMsg: err.message, users: null, title: "Usuarios" });
         }
         else {
-            response.render("user-search", { errorMsg: null, users: result });
+            response.render("user-search", { errorMsg: null, users: result, title: "Usuarios" });
         }
     })
 });
@@ -464,11 +464,11 @@ app.post('/userFilter', accesscontrol);
 	app.post('/userFilter', function (request, response){
     daoUser.getAllUsers(function(err, result){
         if (err) {
-            response.render("user-search", { errorMsg: err.message, users: null });
+            response.render("user-search", { errorMsg: err.message, users: null, title: "Usuarios filtrados por [\"" + request.body.filter + "\"]"});
         }
         else {
             var usersFiltered= ut.filterUserByName(result, request.body.filter);
-            response.render("user-search", { errorMsg: null, users: usersFiltered });
+            response.render("user-search", { errorMsg: null, users: usersFiltered, title: "Usuarios filtrados por [\"" + request.body.filter + "\"]" });
         }
     })
 });
@@ -477,11 +477,11 @@ app.post('/questionTextFilter', accesscontrol);
 	app.post('/questionTextFilter', function (request, response){
     daoQuestion.getAllQuestions(function(err, result){
         if (err) {
-            response.render("questions", { errorMsg: err.message, questions: null });
+            response.render("questions", { errorMsg: err.message, questions: null, title: "Resultados de la búsqueda \"" + request.body.filter + "\"" });
         }
         else {
             var questionsFiltered= ut.filterByText(result, request.body.filter);
-            response.render("questions", { errorMsg: null, questions: questionsFiltered });
+            response.render("questions", { errorMsg: null, questions: questionsFiltered, title: "Resultados de la búsqueda \"" + request.body.filter + "\""  });
         }
     })
 });
@@ -491,10 +491,10 @@ app.get('/questionNoAnswerFilter', accesscontrol);
 	app.get('/questionNoAnswerFilter', function (request, response){
     daoQuestion.questionNoAnswerFilter(function(err, result){
         if (err) {
-            response.render("questions", { errorMsg: err.message, questions: null });
+            response.render("questions", { errorMsg: err.message, questions: null, title: "Preguntas sin responder"});
         }
         else {
-            response.render("questions", { errorMsg: null, questions: result });
+            response.render("questions", { errorMsg: null, questions: result, title: "Preguntas sin responder"});
         }
     })
 });
@@ -504,11 +504,11 @@ app.get('/questionTagFilter/:tag', accesscontrol);
 	app.get('/questionTagFilter/:tag', function (request, response){
     daoQuestion.getAllQuestions(function(err, result){
         if (err) {
-            response.render("questions", { errorMsg: err.message, questions: null });
+            response.render("questions", { errorMsg: err.message, questions: null, title: "Preguntas con la etiqueta [" + request.params.tag + "]"});
         }
         else {
             var questionsFiltered= ut.filterByTag(result, request.params.tag);
-            response.render("questions", { errorMsg: null, questions: questionsFiltered });
+            response.render("questions", { errorMsg: null, questions: questionsFiltered, title: "Preguntas con la etiqueta [" + request.params.tag + "]" });
         }
     })
 });
