@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<%- include ('partials/head.ejs') %>
+<body>
+
+<%- include ('partials/header-no-login.ejs') %>
+
+<body>
+<article class="error-page">
+<h1>Error <%= title %></h1>
+<p><%= body %></p>
+<img src="/img/<%= title%>.gif">
+</article>
+</body>
+<%- include ('partials/footer.ejs') %>
+
+   
+</body>
+
+</html>

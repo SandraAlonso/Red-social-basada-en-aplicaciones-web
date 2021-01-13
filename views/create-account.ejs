@@ -1,22 +1,10 @@
 <!DOCTYPE html>
 <html lang="es">
 
-<head>
-        <title>Crear cuenta</title>
-        <meta charset="utf-8" />
-        <link rel="stylesheet" href="./css/style.css">
-        <link href="https://fonts.googleapis.com/css2?family=Catamaran&display=swap" rel="stylesheet">
-        <link rel="icon" type="img/png" href="./img/favicon.png">
-    </head>
+<%- include ('partials/head.ejs') %>
 <body>
 
-    <header>
-        <nav>
-            <div class="nav-left">
-                <img src="./img/logo.png" alt="logo de 404">
-            </div>
-        </nav>
-    </header>
+    <%- include ('partials/header-no-login.ejs') %>
 
     <article>
 
@@ -49,9 +37,7 @@
         <% } %>
 
    </article>
-    <footer>
-        <span>Hecho con amor por Sandra Alonso y Héctor Arranz</span>
-    </footer>
+   <%- include ('partials/footer.ejs') %>
 </body>
 
 </html>

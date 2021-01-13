@@ -512,3 +512,8 @@ app.get('/questionTagFilter/:tag', accesscontrol);
         }
     })
 });
+
+app.use(function(req, res, next){
+    res.status(404);
+    res.render('error', { title: 404, body: "Parece que te has perdido... O quizás te estás confundiendo... Tranquilo acompañamos a casa"});
+});
