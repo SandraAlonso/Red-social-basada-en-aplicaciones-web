@@ -201,6 +201,7 @@ class DAOTasks {
                                 else {
                                     let sql3;
                                     let plus = typeof rows[0] === 'undefined' ? 0 : -Math.abs(value);
+                                    console.log(plus);
                                     if(value === 1) sql3 = "UPDATE question SET question.likes = question.likes + ?, question.dislikes = question.dislikes + ? WHERE question.id = ?";
                                     else sql3 = "UPDATE question SET question.dislikes = question.dislikes + ?, question.likes = question.likes + ? WHERE question.id = ?";
                                     connection.query(sql3, [Math.abs(value), plus, idQuestion], function(err) {

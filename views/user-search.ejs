@@ -9,10 +9,10 @@
 
         <h2>Usuarios</h2>
 
-        <form class="search">
+        <form class="search" method = "POST" action = "/userFilter">
             <div class="search-box">
                 <img class="search-icon" src="./img/busqueda.png">
-                <input class="search-input" type="text" placeholder="Filtrar por nombre de usuario">
+                <input class="search-input" name ="filter" type="text" placeholder="Filtrar por nombre de usuario">
             </div>
             <input type="submit" value="Filtrar">
         </form>

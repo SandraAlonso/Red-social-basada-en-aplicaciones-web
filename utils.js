@@ -27,6 +27,10 @@ class utils {
         var date_js = new Date(date * 1000);
         return date_js.getDate() + '/' + (date_js.getMonth() + 1) + '/' + date_js.getFullYear();
     }
+
+    filterUserByName(users, str){
+        return users.filter(n => n.name.includes(str));
+    }
 }
 
 module.exports = utils

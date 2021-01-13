@@ -10,8 +10,8 @@
         <div class="todo">
             <div class="user-data">
                 <img class="userPhoto" src="/imagenUsuario" alt="imagen de perfil">
-                <span><%= name %></span>
-                <span>Miembro desde <%= sud %></span>
+                <span><%= user.name %></span>
+                <span>Miembro desde <%= user.date %></span>
             </div>
 
             <div class="stats">
@@ -24,11 +24,11 @@
                     <div class="down">
                         <div>
                             <div>Preguntas</div>
-                            <div class="number"><%=numQuestion%></div>
+                            <div class="number"><%=questionAnswer.q.quest%></div>
                         </div>
                         <div>
                             <div>Respuestas</div>
-                            <div class="number"><%=numAnswer%></div>
+                            <div class="number"><%=questionAnswer.a.ans%></div>
 
                         </div>
                     </div>
@@ -45,56 +45,44 @@
                     <div class="bronze">
                         <div>
                             <div>Bronce</div>
-                            <div class="number"><%= visited.bronze + qVoted.bronze2 + qVoted.bronze1 + aVoted.bronze %></div>
+                            <div class="number"><%= medals.bronze.length  %></div>
                         </div>
                         <ul>
-                            <% if (visited.bronze!=0) {  %>
-                                <li class="medal-descript">Pregunta popular x <%= visited.bronze %></li>
+                            <% if (medals.bronze) { medals.bronze.forEach(function(bronze) { %>
+                            <% if (medals.bronze!=0) {  %>
+                                <li class="medal-descript"><%= bronze.description%> x <%= bronze.cont %></li>
                             <% } %>
-                            <% if (qVoted.bronze1!=0) {  %>
-                                <li class="medal-descript">Estudiante x <%= qVoted.bronze1 %></li>
-                            <% } %>
-                            <% if (qVoted.bronze2!=0) {  %>
-                                <li class="medal-descript">Pregunta interesante x <%= qVoted.bronze2 %></li>
-                            <% } %>
-                            <% if (aVoted.bronze!=0) {  %>
-                                <li class="medal-descript">Respuesta interesante x <%= aVoted.bronze %></li>
-                            <% } %>
+                            <% })}; %>
+                            
                            
                         </ul>
                     </div>
                     <div class="silver">
                         <div>
                             <div>Plata</div>
-                            <div class="number"><%= visited.silver + qVoted.silver + aVoted.silver %></div>
+                            <div class="number"><%= medals.silver.length %></div>
                         </div>
                         <ul>
-                            <% if (visited.silver!=0) {  %>
-                                <li class="medal-descript">Pregunta destacada x <%= visited.silver %></li>
-                            <% } %>
-                            <% if (qVoted.silver!=0) {  %>
-                                <li class="medal-descript">Buena pregunta x <%= qVoted.silver %></li>
-                            <% } %>
-                            <% if (aVoted.silver!=0) {  %>
-                                <li class="medal-descript">Buena respuesta x <%= aVoted.silver %></li>
-                            <% } %>
+                            <% if (medals.silver) { medals.silver.forEach(function(silver) { %>
+                                <% if (medals.silver!=0) {  %>
+                                    <li class="medal-descript"><%= silver.description%> x <%= silver.cont %></li>
+                                <% } %>
+                                <% })}; %>
+                           
                         </ul>
                     </div>
                     <div class="gold">
                         <div>
                             <div>Oro</div>
-                            <div class="number"><%= visited.gold + qVoted.gold + aVoted.gold %></div>
+                            <div class="number"><%= medals.gold.length  %></div>
                         </div>
                         <ul>
-                            <% if (visited.gold!=0) {  %>
-                                <li class="medal-descript">Pregunta famosa x <%= visited.gold %></li>
-                            <% } %>
-                            <% if (qVoted.gold!=0) {  %>
-                                <li class="medal-descript">Excelente pregunta x <%= qVoted.gold %></li>
-                            <% } %>
-                            <% if (aVoted.gold!=0) {  %>
-                                <li class="medal-descript">Excelente respuesta x <%= aVoted.gold %></li>
-                            <% } %>
+                            <% if (medals.gold) { medals.gold.forEach(function(gold) { %>
+                                <% if (medals.gold!=0) {  %>
+                                    <li class="medal-descript"><%= gold.description%> x <%= gold.cont %></li>
+                                <% } %>
+                                <% })}; %>
+                            
                         </ul>
                     </div>
                 </div>
