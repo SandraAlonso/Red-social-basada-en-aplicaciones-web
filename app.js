@@ -13,6 +13,7 @@ const utils = require("./utils");
 
 
 
+
 // Crear un servidor Express.js
 const app = express();
 
@@ -65,160 +66,19 @@ const middlewareSession = session({
 //Lo añadimos a la cadena de middlewares de la aplicación
 app.use(middlewareSession);
 
-//Añadimos la función de control de acceso
-function accesscontrol(request, response, next) {
-    if (typeof request.session.currentUser !== 'undefined') {
-        response.locals.userEmail = request.session.userEmail;
-        response.locals.userName = request.session.userName;
-        response.locals.userId= request.session.currentUser;
-        next();
-    }
-    else {
-        response.redirect("/login");
-    }
-}
-
-const storage = multer.diskStorage({
-    destination: './public/user_imgs',
-    filename: function (req, file, cb) {
-        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
-    }
-});
-
-const fileFilter = function (req, file, cb) {
-    if (
-        file.mimetype === "image/png" ||
-        file.mimetype === "image/jpg" ||
-        file.mimetype === "image/jpeg" ||
-        file.mimetype === "image/gif"
-    ) {
-        cb(null, true);
-    } else {
-        cb(new Error("El formato de archivo debe de ser PNG, JPG, JPEG o GIF"), false); // if validation failed then generate error
-    }
-};
-
-var upload = multer({ storage: storage, fileFilter: fileFilter });
-
-
-//Manejador de ruta para mostrar la vista login
-app.get("/login", function (request, response) {
-    response.status(200);
-    response.render("login", { errorMsg: null });
-});
-
-
 //crear una instancia de utils
 const ut = new utils;
 
-//Manejador para comprobar si el usuario existe en la base de datos
-app.post("/login", function (request, response) {
-    daoUser.isUserCorrect(request.body.user,
-        request.body.password, function (error, user) {
-            if (error) { // error de acceso a la base de datos
-                response.status(500);
-                response.render("login",
-                    {
-                        errorMsg: "Error interno de acceso a la base de datos"
-                    });
-            }
-            else if (user) {
-                request.session.currentUser = user.id;
-                request.session.userName = user.name;
-                request.session.userEmail = user.email;
-                response.redirect("/main");
-            } else {
-                response.status(200);
-                response.render("login",
-                    { errorMsg: "Email y/o contraseña no válidos" });
-            }
-        });
-});
+/* Routers
+----------------------------------------------------------------- */
+var root = require('./routers/root');
+var users = require('./routers/users');
 
-//Manejador de cierre de sesión
-app.get("/logout", accesscontrol);
-app.get("/logout", function (request, response) {
-    request.session.destroy()
-    response.redirect("/login");
-});
+app.use('/', root);
+app.use('/user', users);
 
-//Manejador de crear cuenta
-app.get("/create-account", function (request, response) {
-    response.status(200);
-    response.render("create-account", { errorMsg: null });
-});
-
-//Manejador para insertar usuarios
-app.post("/create-user", upload.single('file'), function (request, response) {
-    if (typeof request.file === 'undefined') {
-        var rand = Math.floor(Math.random() * 4);
-        request.body.img = 'profile-' + rand + '.png';
-        daoUser.addUser(request.body.email, request.body.password, request.body.password2, request.body.name, request.body.img, cb_addUser);
-    }
-    else daoUser.addUser(request.body.email, request.body.password, request.body.password2, request.body.name, request.file.filename, cb_addUser);
-    function cb_addUser(err) {
-        if (err) {
-            if (typeof request.file !== 'undefined') fs.unlinkSync('./user_imgs/' + request.file.filename);
-            response.render("create-account", { errorMsg: err.message });
-        }
-        else {
-            response.redirect("/login");
-        }
-    }
-});
-
-app.get('/users/:id', accesscontrol);
-app.get("/users/:id", function (request, response, next) {
-    daoUser.getUser(request.params.id, function (err, result) {
-        if (err) {
-            response.render("users", { errorMsg: err.message });
-        }
-        else {
-            request.user= result;
-            next();
-        }
-    })
-});
-
-
-app.get("/users/:id", function (request, response, next) {
-    daoUser.getQAFromUser(request.params.id, function (err, result) {
-        if (err) {
-            response.render("users", { errorMsg: err.message });
-        }
-        else {
-
-            request.questionAnswer= result;
-            next();
-        }
-    }
-    )
-});
-app.get("/users/:id", function (request, response, next) {
-    daoUser.getUserScore(request.params.id, function (err, result) {
-        if (err) {
-            response.render("users", { errorMsg: err.message });
-        }
-        else {
-            request.score=result;
-            next();
-        }
-    })
-});
-
-app.get("/users/:id", function (request, response) {
-    daoUser.getMedals(request.params.id, function(err, result){
-        if(err)
-        response.render("users", { errorMsg: err.message , medals: null, score: null, questionAnswer: null, user: null});
-    
-    else{
-        response.render("users", { errorMsg: null, medals: result, score: request.score, questionAnswer: request.questionAnswer, user: request.user });
-    }
-    })
-});
 
 //Manejador para imagen de usuario
-app.get('/imagenUsuario', accesscontrol);
 app.get('/imagenUsuario', function (request, response) {
     daoUser.getUserImageName(request.session.currentUser, function (error, value) {
         if (error) {
@@ -236,13 +96,9 @@ app.get('/imagenUsuario', function (request, response) {
     })
 })
 
-app.get('/main', accesscontrol);
-app.get('/main', function (request, response) {
-    response.status(200);
-    response.render("main");
-})
 
-app.get('/questions', accesscontrol);
+
+
 app.get('/questions', function (request, response) {
     daoQuestion.getAllQuestions(function (err, result) {
         if (err) {
@@ -254,13 +110,12 @@ app.get('/questions', function (request, response) {
     })
 });
 
-app.get('/make-question', accesscontrol);
 app.get('/make-question', function (request, response) {
     response.status(200);
     response.render("make-question", { errorMsg: null });
 });
 
-app.post('/make-question', accesscontrol);
+
 app.post('/make-question', function (request, response) {
 
     let question = new Object();
@@ -280,19 +135,8 @@ app.post('/make-question', function (request, response) {
 
 })
 
-app.get('/user-search', accesscontrol);
-app.get('/user-search', function (request, response) {
-    daoUser.getAllUsers(function (err, result) {
-        if (err) {
-            response.render("user-search", { errorMsg: err.message, users: null, title: "Usuarios" });
-        }
-        else {
-            response.render("user-search", { errorMsg: null, users: result, title: "Usuarios" });
-        }
-    })
-});
 
-app.get('/question/:id', accesscontrol);
+
 app.get('/question/:id', function (request, response, next) {
     daoQuestion.insertView(request.session.currentUser, request.params.id, function (err, result) {
         if (err) {
@@ -339,7 +183,6 @@ app.get('/question/:id', function (request, response) {
 
 
 
-app.post('/question/:id', accesscontrol);
 app.post('/question/:id', function (request, response) {
 
     daoQuestion.insertAnswer(request.session.currentUser, request.params.id, request.body.answer, function (err, result) {
@@ -352,7 +195,6 @@ app.post('/question/:id', function (request, response) {
 
 });
 
-app.get('/question/:id/like-question', accesscontrol);
 app.get('/question/:id/like-question', function (request, response, next) {
     daoQuestion.likeQuestion(request.session.currentUser, request.params.id, 1, function (err) {
         if (err) {
@@ -374,7 +216,6 @@ app.get('/question/:id/like-question', function (request, response) {
     })
 });
 
-app.get('/question/:id/dislike-question', accesscontrol);
 app.get('/question/:id/dislike-question', function (request, response, next) {
     daoQuestion.likeQuestion(request.session.currentUser, request.params.id, -1, function (err) {
         if (err) {
@@ -385,7 +226,6 @@ app.get('/question/:id/dislike-question', function (request, response, next) {
     })
 });
 
-app.get('/question/:id/like-answer/:idAns', accesscontrol);
 app.get('/question/:id/like-answer/:idAns', function (request, response, next) {
     daoQuestion.likeAnswer(request.session.currentUser, request.params.idAns, 1, function (err) {
         if (err) {
@@ -406,7 +246,6 @@ app.get('/question/:id/like-answer/:idAns', function (request, response) {
     })
 });
 
-app.get('/question/:id/dislike-answer/:idAns', accesscontrol);
 app.get('/question/:id/dislike-answer/:idAns', function (request, response) {
     daoQuestion.likeAnswer(request.session.currentUser, request.params.idAns, -1, function (err) {
         if (err) {
@@ -419,7 +258,6 @@ app.get('/question/:id/dislike-answer/:idAns', function (request, response) {
 
 
 //Filtrado de usuario por nombre
-app.post('/userFilter', accesscontrol);
 	app.post('/userFilter', function (request, response){
     daoUser.getAllUsers(function(err, result){
         if (err) {
@@ -432,7 +270,6 @@ app.post('/userFilter', accesscontrol);
     })
 });
 //Filtrado de preguntas por texto
-app.post('/questionTextFilter', accesscontrol);
 	app.post('/questionTextFilter', function (request, response){
     daoQuestion.getAllQuestions(function(err, result){
         if (err) {
@@ -446,7 +283,6 @@ app.post('/questionTextFilter', accesscontrol);
 });
 
 //Filtrado de preguntas sin respuesta
-app.get('/questionNoAnswerFilter', accesscontrol);
 	app.get('/questionNoAnswerFilter', function (request, response){
     daoQuestion.questionNoAnswerFilter(function(err, result){
         if (err) {
@@ -459,7 +295,6 @@ app.get('/questionNoAnswerFilter', accesscontrol);
 });
 
 //Filtrado de preguntas por texto
-app.get('/questionTagFilter/:tag', accesscontrol);
 	app.get('/questionTagFilter/:tag', function (request, response){
     daoQuestion.getAllQuestions(function(err, result){
         if (err) {
