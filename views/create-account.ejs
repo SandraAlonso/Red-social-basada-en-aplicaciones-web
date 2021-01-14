@@ -17,6 +17,7 @@
            
             <label for="password" >Contraseña (debe contener al menos una mayuscula, una minuscula, un numero y tiene que tener entre 4 y 16 caracteres) *</label>
             <input type="password" pattern = "^(?=\w*\d)(?=\w*[A-Z])(?=\w*[a-z])\S{4,16}$" name="password" required>
+            <!--^(?=.*\d)(?=.*[\u0021-\u002b\u003c-\u0040])(?=.*[A-Z])(?=.*[a-z])\S{8,16}$-->
         
             <label for="password2">Confirmar contraseña *</label>
             <input type="password" name="password2" required>
