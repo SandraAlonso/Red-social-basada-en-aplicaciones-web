@@ -26,7 +26,7 @@
                 <p class="spaces"><%= question.body %></p>
                 <div class="tag-container">
                     <% if(question.tags) { question.tags.forEach(function(tag) { %>
-                        <a href="/questionTagFilter/<%= tag %>">
+                        <a href="/question/filter-tag/<%= tag %>">
                             <span class="tag"><%= tag %></span>
                         </a>
                     <% })}; %>
@@ -34,8 +34,8 @@
             </div>
             <div class="card-right">
                 <p>Formulada el <%= question.date %></p>
-                <img src="/user_imgs/<%= question.img %>">
-                <a href="/users/<%= question.userId %>">
+                <img class="userPhoto" src="/user_imgs/<%= question.img %>">
+                <a href="/user/<%= question.userId %>">
                     <span><%= question.name %></span>
                 </a>
             </div>
@@ -64,8 +64,8 @@
                 </div>
                 <div class="card-right">
                     <p>Formulada el <%= answer.date %></p>
-                    <img src="/user_imgs/<%= answer.img %>">
-                    <a href="/users/<%= answer.userId %>">
+                    <img class="userPhoto" src="/user_imgs/<%= answer.img %>">
+                    <a href="/user/<%= answer.userId %>">
                         <span><%= answer.name %></span>
                     </a>
                 </div>

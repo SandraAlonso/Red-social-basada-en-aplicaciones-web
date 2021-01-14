@@ -10,9 +10,9 @@
 
         <h2><%= title %></h2>
 
-        <form class="search" method = "POST" action = "/userFilter">
+        <form class="search" method = "POST" action = "/user/filter">
             <div class="search-box">
-                <img class="search-icon" src="./img/busqueda.png">
+                <img class="search-icon" src="/img/busqueda.png">
                 <input class="search-input" name ="filter" type="text" placeholder="Filtrar por nombre de usuario">
             </div>
             <input type="submit" value="Filtrar">
@@ -26,14 +26,14 @@
 
                     <% if (users) { users.forEach(function(users) { %>
                         <div class="user-data">
-                            <img class="userPhoto" src="./user_imgs/<%= users.img %>" alt="imagen de perfil">
-                            <a href="/users/<%= users.id %>">
+                            <img class="userPhoto" src="/user_imgs/<%= users.img %>" alt="imagen de perfil">
+                            <a href="/user/<%= users.id %>">
                             <span>
                                 <%= users.name %>
                             </span>
                             <span class="number"><%= users.score %></span>                            
                             <% if (users.tag!=null) { %>
-                            <a href="/questionTagFilter/<%= users.tag %>">
+                            <a href="/question/filter-tag/<%= users.tag %>">
                                 <span class="tag"><%= users.tag %></span>
                             </a>
                             <% } %>

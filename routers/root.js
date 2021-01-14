@@ -28,6 +28,7 @@ router.all('*', function (request, response, next) {
             response.locals.userEmail = request.session.userEmail;
             response.locals.userName = request.session.userName;
             response.locals.userId= request.session.currentUser;
+            response.locals.userImage = request.session.userImage;
             next();
         }
         else {
@@ -78,6 +79,7 @@ router.route("/login")
                 request.session.currentUser = user.id;
                 request.session.userName = user.name;
                 request.session.userEmail = user.email;
+                request.session.userImage = user.img;
                 response.status(200);
                 response.redirect("/main");
             } else {
@@ -98,8 +100,8 @@ router.route("/create-account")
     })
     .post(upload.single('file'), function (request, response) {
     if (typeof request.file === 'undefined') {
-        var rand = Math.floor(Math.random() * 4);
-        request.body.img = 'profile-' + rand + '.png';
+        var rand = Math.floor(Math.random() * 2) + 1;
+        request.body.img = 'defecto' + rand + '.png';
         daoUser.addUser(request.body.email, request.body.password, request.body.password2, request.body.name, request.body.img, cb_addUser);
     }
     else daoUser.addUser(request.body.email, request.body.password, request.body.password2, request.body.name, request.file.filename, cb_addUser);
@@ -124,5 +126,7 @@ router.get('/main', function (request, response) {
     response.status(200);
     response.render("main");
 })
+
+
 
 module.exports = router;

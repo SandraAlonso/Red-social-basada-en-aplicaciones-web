@@ -393,7 +393,7 @@ class DAOTasks {
                         callback(new Error("Error en la base de datos 1"));
                     }
                     else {
-                        if(typeof rows[0] !== 'undefined') {
+                        if(rows.length === 0) {
                             const sql1 = "INSERT INTO visit(idUser, idQuestion) VALUES (?,?) ON DUPLICATE KEY UPDATE idUser = ?";
                             connection.query(sql1, [idUser, idQuestion, idUser], function(err){
                                 if(err) {

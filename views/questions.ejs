@@ -12,7 +12,7 @@
 
     <div class="make-question">
         <p><%=questions.length%> preguntas</p>
-        <a class="link-button" href="/make-question">Formular una pregunta</a>
+        <a class="link-button" href="/question/make">Formular una pregunta</a>
     </div>
 
     <% if (errorMsg!=null) { %>
@@ -30,7 +30,7 @@
                     <p><%= question.body %><% if(question.body.length === 150) {%>...<% }; %></p>
                     <div class="tag-container">
                         <% if(question.tags) { question.tags.forEach(function(tag) { %>
-                       <a class="tag" href = "/questionTagFilter/<%= tag %>"><%= tag %></span></a>
+                       <a class="tag" href = "/question/filter-tag/<%= tag %>"><%= tag %></span></a>
                         <% })}; %>
                     </div>
                 </div>
@@ -38,7 +38,7 @@
                     <p>Formulada el <%= question.date %></p>
                     <img class= "userPhoto" src="/user_imgs/<%= question.img %>">
                     
-                    <a href="/users/<%= question.userId %>">
+                    <a href="/user/<%= question.userId %>">
                         <span><%= question.name %></span>
                     </a>
                 </div>

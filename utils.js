@@ -29,13 +29,12 @@ class utils {
     }
 
     filterUserByName(users, str){
-        return users.filter(n => n.name.includes(str));
+        return users.filter(n => n.name.toLowerCase().includes(str.toLowerCase()));
     }
 
     //Filtros de preguntas
     filterByTag(questions, tag){
-        console.log(questions);
-        return questions.filter(o => o.tags.some(aux => tag == aux));
+        return questions.filter(o => o.tags.some(aux => tag.toLowerCase() == aux.toLowerCase()));
     }
     filterByText(questions, str){
         return questions.filter(n => n.title.includes(str) || n.body.includes(str));

@@ -6,10 +6,10 @@
             </a>
             <ul>
                 <li>
-                    <a class="link-button" href="/questions">Preguntas</a>
+                    <a class="link-button" href="/question">Preguntas</a>
                 </li>
                 <li>
-                    <a class="link-button" href="/questionNoAnswerFilter">Sin responder</a>
+                    <a class="link-button" href="/question/filter-no-answer">Sin responder</a>
                 </li>
                 <li>
                     <a class="link-button" href="/user/search">Usuarios</a>
@@ -18,7 +18,7 @@
 
         </div>
         <div class="nav-right">
-            <img class="userPhoto" src="/imagenUsuario" alt="imagen de perfil">
+            <img class="userPhoto" src="/user_imgs/<%= userImage %>" alt="imagen de perfil">
             <span> <a class="nombreUsuario" href="/user/<%= userId %>">
                     <%= userName %>
                 </a></span>
