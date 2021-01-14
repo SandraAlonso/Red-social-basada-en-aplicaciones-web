@@ -1,41 +1,10 @@
 var express = require('express');
 var router = express.Router();
 
-const multer = require('multer');
-const fs = require('fs');
 const path = require("path");
-const mysql = require("mysql");
-const config = require("../config");
-const DAOUsers = require("../DAOS/DAOUser");
+const multer = require('multer');
 
-//Añadir un middleware static para la entrega de los recursos estaticos al cliente
-const ficherosEstaticos = path.join(__dirname, "public");
-router.use("/", express.static(ficherosEstaticos));
-
-// Crear un pool de conexiones a la base de datos de MySQL
-const pool = mysql.createPool(config.mysqlConfig);
-
-const daoUser = new DAOUsers(pool);
-
-//Añadimos la función de control de acceso
-router.all('*', function (request, response, next) {
-    console.log(request.url);
-    if(request.url === '/login' || request.url === '/create-account') {
-        next();
-    }
-    else {
-        if (typeof request.session.currentUser !== 'undefined') {
-            response.locals.userEmail = request.session.userEmail;
-            response.locals.userName = request.session.userName;
-            response.locals.userId= request.session.currentUser;
-            response.locals.userImage = request.session.userImage;
-            next();
-        }
-        else {
-            response.redirect("/login");
-        }
-    }
-});
+var rootController = require('../controllers/root');
 
 //MULTER
 
@@ -55,78 +24,26 @@ const fileFilter = function (req, file, cb) {
     ) {
         cb(null, true);
     } else {
-        cb(new Error("El formato de archivo debe de ser PNG, JPG, JPEG o GIF"), false); // if validation failed then generate error
+        req.fileValidationError = "Extensión de archivo no permitida debe de ser PNG, JPG, JPEG o GIF";
+        cb(null, false, req.fileValidationError);
     }
 };
 
 var upload = multer({ storage: storage, fileFilter: fileFilter });
 
-// ROUTERS
+//Añadimos la función de control de acceso
+router.all('*', rootController.accesscontrol);
+
+router.get("/", rootController.getMain);
 
 router.route("/login")
-    .get(function (request, response) {
-    response.status(200);
-    response.render("login", { errorMsg: null });
-    })
-    .post(function (request, response) {
-    daoUser.isUserCorrect(request.body.user,
-        request.body.password, function (error, user) {
-            if (error) {
-                response.status(500);
-                response.render("login", {errorMsg: "Error interno de acceso a la base de datos"});
-            }
-            else if (user) {
-                request.session.currentUser = user.id;
-                request.session.userName = user.name;
-                request.session.userEmail = user.email;
-                request.session.userImage = user.img;
-                response.status(200);
-                response.redirect("/main");
-            } else {
-                response.status(401);
-                response.render("login", { errorMsg: "Email y/o contraseña no válidos" });
-            }
-        }
-    );
-});
-
-//Manejador de crear cuenta
-//TODO Revisar los status
+    .get(rootController.getLogin)
+    .post(rootController.postLogin);
 
 router.route("/create-account")
-    .get(function (request, response) {
-        response.status(200);
-        response.render("create-account", { errorMsg: null });
-    })
-    .post(upload.single('file'), function (request, response) {
-    if (typeof request.file === 'undefined') {
-        var rand = Math.floor(Math.random() * 2) + 1;
-        request.body.img = 'defecto' + rand + '.png';
-        daoUser.addUser(request.body.email, request.body.password, request.body.password2, request.body.name, request.body.img, cb_addUser);
-    }
-    else daoUser.addUser(request.body.email, request.body.password, request.body.password2, request.body.name, request.file.filename, cb_addUser);
-    function cb_addUser(err) {
-        if (err) {
-            if (typeof request.file !== 'undefined') fs.unlinkSync('./user_imgs/' + request.file.filename);
-            response.render("create-account", { errorMsg: err.message });
-        }
-        else {
-            response.redirect("/login");
-        }
-    }
-});
+    .get(rootController.getCreateAccount)
+    .post(upload.single('file'), rootController.postCreateAccount);
 
-router.get("/logout", function (request, response) {
-    request.session.destroy();
-    response.status(200);
-    response.redirect("/login");
-});
-
-router.get('/main', function (request, response) {
-    response.status(200);
-    response.render("main");
-})
-
-
+router.get("/logout", rootController.getLogout);
 
 module.exports = router;

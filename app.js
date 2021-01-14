@@ -1,26 +1,12 @@
 "use strict";
 
-const mysql = require("mysql");
 const config = require("./config");
 const express = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");
-const DAOUsers = require("./DAOS/DAOUser");
-const DAOQuestion = require("./DAOS/DAOQuestion");
-const utils = require("./utils");
-
-
-
 
 // Crear un servidor Express.js
 const app = express();
-
-// Crear un pool de conexiones a la base de datos de MySQL
-const pool = mysql.createPool(config.mysqlConfig);
-
-// Crear una instancia de DAOTasks
-const daoQuestion = new DAOQuestion(pool);
-const daoUser = new DAOUsers(pool);
 
 // Arrancar el servidor
 app.listen(config.port, function (err) {
@@ -31,7 +17,6 @@ app.listen(config.port, function (err) {
         console.log(`Servidor arrancado en el puerto ${config.port}`);
     }
 });
-
 
 //Añadir un middleware static para la entrega de los recursos estaticos al cliente
 const ficherosEstaticos = path.join(__dirname, "public");
@@ -44,8 +29,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.set("view engine", "ejs");
 //Definir el motor de plantillas
 app.set("views", path.join(__dirname, "views"));
-
-
 
 //Obtener la clase MySQLStore
 const session = require("express-session");
@@ -63,9 +46,6 @@ const middlewareSession = session({
 });
 //Lo añadimos a la cadena de middlewares de la aplicación
 app.use(middlewareSession);
-
-//crear una instancia de utils
-const ut = new utils;
 
 /* Routers
 ----------------------------------------------------------------- */

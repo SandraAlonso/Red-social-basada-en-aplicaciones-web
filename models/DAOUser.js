@@ -36,7 +36,6 @@ class DAOUsers {
         );
     }
     addUser(email, password, password2, name, file, callback) {
-
         this.pool.getConnection(function (err, connection) {
             if (err) {
                 callback(new Error("Error de conexión a la base de datos"));
@@ -332,6 +331,35 @@ class DAOUsers {
                         }
                     }
                 )
+            }
+        });
+    }
+
+    checkId(id, callback) {
+        this.pool.getConnection(function (err, connection) {
+            if (err) {
+                callback(new Error("Error de conexión a la base de datos"));
+            }
+            else {
+                const sql = "SELECT * FROM user WHERE user.id = ?"
+                connection.query(sql, 
+                [id],
+                function(err, rows) {
+                    if (err) {
+                        connection.release(); // devolver al pool la conexión
+                        callback(new Error("Error en la base de datos 1"));
+                    }
+                    else {
+                        if(rows.length === 0) {
+                            connection.release();
+                            callback(new Error("Usuario no existente"));
+                        }
+                        else {
+                            connection.release();
+                            callback(null);    
+                        }
+                    }
+                });
             }
         });
     }

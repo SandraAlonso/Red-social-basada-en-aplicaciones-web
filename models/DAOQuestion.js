@@ -3,7 +3,7 @@
 const utils = require("../utils");
 const ut = new utils;
 
-class DAOTasks {
+class DAOQuestion {
     constructor(pool) { this.pool = pool; }
     insertQuestion(id, question, callback) {
         this.pool.getConnection(function (err, connection) {
@@ -236,7 +236,7 @@ class DAOTasks {
             }
         });
     }
-    checkMedals(idUser, idQuestion, callback) {
+    checkMedals(idQuestion, callback) {
         this.pool.getConnection(function (err, connection) {
             if (err) {
                 callback(new Error("Error de conexión a la base de datos"));
@@ -273,7 +273,7 @@ class DAOTasks {
                         }
                         if(add) {
                             const sql2 = "INSERT INTO medals(idUser, idElement, type, description) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE type = type";
-                            connection.query(sql2, [idUser, idQuestion, type, description], function(err) {
+                            connection.query(sql2, [rows[0].idUser, idQuestion, type, description], function(err) {
                                 if (err) {
                                     connection.release(); // devolver al pool la conexión
                                     callback(new Error("Error de conexión a la base de datos2"));
@@ -330,7 +330,7 @@ class DAOTasks {
             }
         });
     }
-    checkMedalsAnswer(idUser, idAnswer, callback) {
+    checkMedalsAnswer(idAnswer, callback) {
         this.pool.getConnection(function (err, connection) {
             if (err) {
                 callback(new Error("Error de conexión a la base de datos"));
@@ -364,8 +364,7 @@ class DAOTasks {
 
                         if(add) {
                             const sql2 = "INSERT INTO medals(idUser, idElement, type, description) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE type = type";
-                            connection.query(sql2, [idUser, idAnswer, type, description], function(err) {
-                                connection.release(); // devolver al pool la conexión
+                            connection.query(sql2, [rows[0].idUser, idAnswer, type, description], function(err) {
                                 if (err) {
                                     connection.release(); // devolver al pool la conexión
                                     callback(new Error("Error de conexión a la base de datos2"));
@@ -419,7 +418,7 @@ class DAOTasks {
             }
         });
     }
-    checkMedalsViews(idUser, idQuestion, callback) {
+    checkMedalsViews(idQuestion, callback) {
         this.pool.getConnection(function (err, connection) {
             if (err) {
                 callback(new Error("Error de conexión a la base de datos"));
@@ -451,10 +450,9 @@ class DAOTasks {
                         else {
                             add = false;
                         }
-
                         if(add) {
                             const sql2 = "INSERT INTO medals(idUser, idElement, type, description) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE type = type";
-                            connection.query(sql2, [idUser, idQuestion, type, description], function(err) {
+                            connection.query(sql2, [rows[0].idUser, idQuestion, type, description], function(err) {
                                 if (err) {
                                     connection.release(); // devolver al pool la conexión
                                     callback(new Error("Error de conexión a la base de datos2"));
@@ -515,6 +513,64 @@ class DAOTasks {
     }
 
 
+    checkId(id, callback) {
+        this.pool.getConnection(function (err, connection) {
+            if (err) {
+                callback(new Error("Error de conexión a la base de datos"));
+            }
+            else {
+                const sql = "SELECT * FROM question WHERE question.id = ?"
+                connection.query(sql, 
+                [id],
+                function(err, rows) {
+                    if (err) {
+                        connection.release(); // devolver al pool la conexión
+                        callback(new Error("Error en la base de datos 1"));
+                    }
+                    else {
+                        if(rows.length === 0) {
+                            connection.release();
+                            callback(new Error("Pregunta no existente"));
+                        }
+                        else {
+                            connection.release();
+                            callback(null);    
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    checkIdAns(id, callback) {
+        this.pool.getConnection(function (err, connection) {
+            if (err) {
+                callback(new Error("Error de conexión a la base de datos"));
+            }
+            else {
+                const sql = "SELECT * FROM answer WHERE answer.id = ?"
+                connection.query(sql, 
+                [id],
+                function(err, rows) {
+                    if (err) {
+                        connection.release(); // devolver al pool la conexión
+                        callback(new Error("Error en la base de datos 1"));
+                    }
+                    else {
+                        if(rows.length === 0) {
+                            connection.release();
+                            callback(new Error("Respuesta no existente"));
+                        }
+                        else {
+                            connection.release();
+                            callback(null);    
+                        }
+                    }
+                });
+            }
+        });
+    }
+
 
 }
-module.exports = DAOTasks
+module.exports = DAOQuestion
