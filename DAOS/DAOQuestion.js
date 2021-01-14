@@ -476,7 +476,7 @@ class DAOTasks {
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                const sql ="SELECT question.id, question.title, question.body, UNIX_TIMESTAMP(question.date) AS date, user.name, user.img, tags.tag FROM question LEFT JOIN tags ON question.id = tags.idQuestion JOIN user ON question.idUser = user.id WHERE NOT EXISTS (SELECT a.id FROM answer a where question.id = a.idQuestion) ORDER BY question.date DESC";
+                const sql ="SELECT  question.idUser AS userId, question.id, question.title, question.body, UNIX_TIMESTAMP(question.date) AS date, user.name, user.img, tags.tag FROM question LEFT JOIN tags ON question.id = tags.idQuestion JOIN user ON question.idUser = user.id WHERE NOT EXISTS (SELECT a.id FROM answer a where question.id = a.idQuestion) ORDER BY question.date DESC";
                 connection.query(sql, 
                 function(err, rows) {
                     if (err) {

@@ -162,20 +162,20 @@ class DAOUsers {
                             var contTags = [];
                             var resultArray = Object.values(JSON.parse(JSON.stringify(rows)))
                             if (resultArray.length != 0) {
-                                var suma = 0;
+                                var suma = 1;
                                 var i;
                                 var ant = resultArray[0];
                                 for (let a = 0; a <= resultArray.length; a++) {
                                     i = resultArray[a];
                                     if (typeof i === 'undefined' || i.name != ant.name) {
                                         //Calculo de puntuacion
-                                        suma = (ant.likes * 10 - ant.dislikes * 2);
+                                        suma += (ant.likes * 10 - ant.dislikes * 2);
                                         if (suma <= 0)
                                             suma = 1;
                                         ant.score = suma;
                                         delete ant.likes;
                                         delete ant.dislikes;
-                                        suma = 0;
+                                        suma = 1;
 
                                         //Calculo de tag mas usado
                                         if (typeof i === 'undefined') {
@@ -336,144 +336,6 @@ class DAOUsers {
         });
     }
 
-    /* getVisitedQuestions(id, callback) {
-         this.pool.getConnection(function (err, connection) {
-             if (err) {
-                 callback(new Error("Error de conexión a la base de datos1"));
-             }
-             else {
-                 connection.query("SELECT q.id FROM question q LEFT JOIN visit v ON v.idQuestion = q.id WHERE q.idUser = ?  ORDER BY q.id ASC",
-                     [id],
-                     function (err, rows) {
-                         if (err) {
-                             callback(new Error("Error de acceso a la base de dato2s"));
-                         }
-                         else {
-                             var result = new Object();
-                             result.gold = 0;
-                             result.silver = 0;
-                             result.bronze = 0;
-                             var v = 1;
-                             var visitedQuestion = Object.values(JSON.parse(JSON.stringify(rows)));
-                             var ant;
-                             var i;
-                             for (let a = 0; a<visitedQuestion.length ;a++) {
-                                 i= visitedQuestion[a];
-                                 if (typeof ant === 'undefined' || i.id == ant.id) {
-                                     v++;
-                                 }
-                                 if((typeof ant !== 'undefined' && i.id != ant.id )|| a == visitedQuestion.length-1 ){ 
-                                     if (v >= 2 && v < 4) {
-                                         result.bronze++;
-                                     }
-                                     else if (v >= 4 && v < 6) {
-                                         result.silver++;
- 
-                                     }
-                                     else if (v >= 6) {
-                                         result.gold++;
- 
-                                     }
-                                     v = 1;
-                                 }
-                                 ant = i;
- 
-                             }
-                             callback(null, result);
- 
-                         }
- 
-                     });
-             }
-         });
-     }
-     getVotedQuestions(id, callback) {
-         this.pool.getConnection(function (err, connection) {
-             if (err) {
-                 callback(new Error("Error de conexión a la base de datos1"));
-             }
-             else {
-                 connection.query("SELECT DISTINCT q.id, SUM(vq.type) over (PARTITION by q.id) as votes FROM votequestion vq RIGHT JOIN question q ON vq.idQuestion = q.id WHERE q.idUser = ?",
-                     [id],
-                     function (err, rows) {
-                         if (err) {
-                             callback(new Error("Error de acceso a la base de dato2s"));
-                         }
-                         else {
-                             var result = new Object();
-                             result.gold = 0;
-                             result.silver = 0;
-                             result.bronze1 = 0;
-                             result.bronze2 = 0;
- 
-                             var votedQuestion = Object.values(JSON.parse(JSON.stringify(rows)));
-                             for (let i of votedQuestion) {
-                                 if (i.votes >= 1 && i.votes < 2) {
-                                     result.bronze1++;
-                                 }
-                                 else if (i.votes >= 2 && i.votes < 4) {
-                                     result.bronze2++;
- 
-                                 }
-                                 else if (i.votes >= 4 && i.votes < 6) {
-                                     result.silver++;
- 
-                                 }
-                                 else if (i.votes >= 6) {
-                                     result.gold++;
-                                 }
-                             }
- 
-                         }
-                         callback(null, result);
- 
-                     });
- 
-                     }
-     });
- 
-     }
-     getVotedAnswer(id, callback) {
-         this.pool.getConnection(function (err, connection) {
-             if (err) {
-                 callback(new Error("Error de conexión a la base de datos1"));
-             }
-             else {
-                 connection.query("SELECT DISTINCT a.id, SUM(va.type) over (PARTITION by a.id) as votes FROM voteanwer va RIGHT JOIN answer a ON va.idAnswer = a.id WHERE a.idUser = ?",
-                     [id],
-                     function (err, rows) {
-                         if (err) {
-                             callback(new Error("Error de acceso a la base de dato2s"));
-                         }
-                         else {
-                             var result = new Object();
-                             result.gold = 0;
-                             result.silver = 0;
-                             result.bronze = 0;
- 
-                             var votedAnswer = Object.values(JSON.parse(JSON.stringify(rows)));
-                             for (let i of votedAnswer) {
-                                 if (i.votes >= 2 && i.votes < 4) {
-                                     result.bronze++;
-                                 }
-                                 else if (i.votes >= 4 && i.votes < 6) {
-                                     result.silver++;
- 
-                                 }
-                                 else if (i.votes >= 6) {
-                                     result.gold++;
-                                 }
-                             }
- 
-                         }
-                          callback(null, result);
- 
-                     });
- 
-                     }
-     });
- 
-     }*/
 }
 
 module.exports = DAOUsers;
