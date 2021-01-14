@@ -25,8 +25,6 @@ class DAOTasks {
                                 var values = new Array;
                                 for (var i = 0; i < 5 && i< question.tags.length; i++) {
                                     values.push([rows.insertId, question.tags[i]]);
-                                    console.log("entro");
-                                    console.log(values);
                                 }
                                 connection.query(sql, [values],
                                     function (err) {
@@ -55,7 +53,7 @@ class DAOTasks {
                 callback(new Error("Error de conexión a la base de datos"));    
             }
             else {
-                connection.query("SELECT question.id, question.title, question.body, UNIX_TIMESTAMP(question.date) AS date, user.id AS userId, user.name, user.img, tags.tag FROM question LEFT JOIN tags ON question.id = tags.idQuestion JOIN user ON question.idUser = user.id ORDER BY question.date",
+                connection.query("SELECT question.id, question.title, question.body, UNIX_TIMESTAMP(question.date) AS date, user.id AS userId, user.name, user.img, tags.tag FROM question LEFT JOIN tags ON question.id = tags.idQuestion JOIN user ON question.idUser = user.id ORDER BY question.date DESC",
                 function (err, rows) {
                     if (err) {
                         connection.release();
@@ -273,7 +271,6 @@ class DAOTasks {
                         else {
                             add = false;
                         }
-                        console.log("hola");
                         if(add) {
                             const sql2 = "INSERT INTO medals(idUser, idElement, type, description) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE type = type";
                             connection.query(sql2, [idUser, idQuestion, type, description], function(err) {
@@ -479,7 +476,7 @@ class DAOTasks {
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                const sql ="SELECT question.id, question.title, question.body, UNIX_TIMESTAMP(question.date) AS date, user.name, user.img, tags.tag FROM question LEFT JOIN tags ON question.id = tags.idQuestion JOIN user ON question.idUser = user.id WHERE NOT EXISTS (SELECT a.id FROM answer a where question.id = a.idQuestion) ORDER BY question.date ASC";
+                const sql ="SELECT question.id, question.title, question.body, UNIX_TIMESTAMP(question.date) AS date, user.name, user.img, tags.tag FROM question LEFT JOIN tags ON question.id = tags.idQuestion JOIN user ON question.idUser = user.id WHERE NOT EXISTS (SELECT a.id FROM answer a where question.id = a.idQuestion) ORDER BY question.date DESC";
                 connection.query(sql, 
                 function(err, rows) {
                     if (err) {

@@ -212,49 +212,11 @@ app.get("/users/:id", function (request, response) {
         response.render("users", { errorMsg: err.message , medals: null, score: null, questionAnswer: null, user: null});
     
     else{
-        console.log(request.user.img)
         response.render("users", { errorMsg: null, medals: result, score: request.score, questionAnswer: request.questionAnswer, user: request.user });
     }
     })
 });
 
-/*
-app.get("/users", function (request, response, next) {
-    daoUser.getVisitedQuestions(request.session.currentUser, function (err, result) {
-        if (err) {
-            response.render("users", { errorMsg: err.message });
-        }
-        else {
-
-            request.visited=result;
-            next();
-        }
-    })
-});
-
-app.get("/users", function (request, response, next) {
-    daoUser.getVotedQuestions(request.session.currentUser, function (err, result) {
-        if (err) {
-            response.render("users", { errorMsg: err.message });
-        }
-        else {
-
-            request.qVoted=result;
-            response.render("users", { errorMsg: null, qVoted: request.qVoted, visited: request.visited, score: request.score, questionAnswer: request.questionAnswer, user: request.user });
-        }
-    })
-});
-app.get("/users", function (request, response) {
-    daoUser.getVotedAnswer(request.session.currentUser, function (err, result) {
-        if (err) {
-            response.render("users", { errorMsg: err.message, aVoted: null, qVoted: null, visited: null, score: null, numQuestion: null, numAnswer: null, name: null, email: null, sud: null });
-        }
-        else {
-            console.log(result);
-            response.render("users", { errorMsg: null, aVoted: result, qVoted: request.qVoted, visited: request.visited, score: request.score, questionAnswer: request.questionAnswer, user: request.user });
-        }
-    })
-});*/
 //Manejador para imagen de usuario
 app.get('/imagenUsuario', accesscontrol);
 app.get('/imagenUsuario', function (request, response) {
@@ -305,7 +267,6 @@ app.post('/make-question', function (request, response) {
     question.title = request.body.title;
     question.body = request.body.body;
     question.tags = ut.createQuestion(request.body.tags);
-    console.log(question);
     daoQuestion.insertQuestion(request.session.currentUser, question, function (error) {
         if (error) { // error de acceso a la base de datos
             response.status(500);
@@ -338,7 +299,6 @@ app.get('/question/:id', function (request, response, next) {
             response.render("question", { errorMsg: err.message, question: null, answers: null });
         }
         else {
-            console.log("hola1");
             next();
         }
     })
@@ -371,9 +331,7 @@ app.get('/question/:id', function (request, response) {
         if (err) {
             response.render("question", { errorMsg: err.message, question: null, answers: null });
         }
-        else {
-            console.log("hola4");
-            
+        else {            
             response.render("question", { errorMsg: null, question: request.question, answers: result })
         }
     })
@@ -383,14 +341,13 @@ app.get('/question/:id', function (request, response) {
 
 app.post('/question/:id', accesscontrol);
 app.post('/question/:id', function (request, response) {
-    console.log("/question/" + request.params.id);
 
     daoQuestion.insertAnswer(request.session.currentUser, request.params.id, request.body.answer, function (err, result) {
         if (err) {
             //TODO FALTA CONTROL DE ESTE ERROR
             console.log(err);
         }
-        response.redirect("/question/" + request.params.id);
+        response.redirect("/questions");
     })
 
 });

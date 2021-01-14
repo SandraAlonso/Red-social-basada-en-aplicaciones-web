@@ -1,25 +1,28 @@
 <header>
-        <nav>
-            <div class="nav-left">
+    <nav>
+        <div class="nav-left">
+            <a href="/main">
                 <img src="/img/logo.png" alt="logo de 404">
+            </a>
+            <ul>
+                <li>
+                    <a class="link-button" href="/questions">Preguntas</a>
+                </li>
+                <li>
+                    <a class="link-button" href="questionNoAnswerFilter">Sin responder</a>
+                </li>
+                <li>
+                    <a class="link-button" href="/user-search">Usuarios</a>
+                </li>
+            </ul>
 
-                <ul>
-                    <li>
-                        <a class="link-button" href="/questions">Preguntas</a>
-                    </li>
-                    <li>
-                        <a class="link-button" href="questionNoAnswerFilter">Sin responder</a>
-                    </li>
-                    <li>
-                        <a class="link-button" href="/user-search">Usuarios</a>
-                    </li>
-                </ul>
-
-            </div>
-            <div class="nav-right">
-                <img class="userPhoto" src="/imagenUsuario" alt="imagen de perfil">
-                <span> <a class="nombreUsuario" href="/users/<%= userId %>"><%= userName %></a></span>
-                <a class="link-button" href="/logout">Cerrar sesión</a>
-            </div>
-        </nav>
+        </div>
+        <div class="nav-right">
+            <img class="userPhoto" src="/imagenUsuario" alt="imagen de perfil">
+            <span> <a class="nombreUsuario" href="/users/<%= userId %>">
+                    <%= userName %>
+                </a></span>
+            <a class="link-button" href="/logout">Cerrar sesión</a>
+        </div>
+    </nav>
 </header>
