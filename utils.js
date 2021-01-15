@@ -29,7 +29,6 @@ class utils {
     }
 
     filterUserByName(users, str){
-        console.log(users);
         return users.filter(n => n.name.toLowerCase().includes(str.toLowerCase()));
     }
 
