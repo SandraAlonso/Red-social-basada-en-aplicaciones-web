@@ -143,79 +143,94 @@ class DAOUsers {
 
 
 
-    getAllUsers( callback) {
+    getAllUsers(callback) {
         this.pool.getConnection(function (err, connection) {
             if (err) {
                 callback(new Error("Error de conexión a la base de datos1"));
             }
             else {
-                connection.query("SELECT u.id, u.name, u.img, SUM(q.likes) over (PARTITION by q.idUser) AS likes, SUM(q.dislikes) over (PARTITION by q.idUser) AS dislikes, t.tag FROM user u LEFT JOIN question q ON q.idUser = u.id LEFT JOIN tags t ON t.idQuestion = q.id ORDER BY u.name ASC",
+                connection.query("SELECT DISTINCT u.id, u.name, u.img, SUM(q.likes) AS qlikes, SUM(q.dislikes) AS qdislikes FROM user u, question q WHERE q.idUser = u.id GROUP BY u.id",
                     function (err, rows) {
                         if (err) {
                             connection.release(); // devolver al pool la conexión
                             callback(new Error("Error de acceso a la base de dato2s"));
                         }
                         else {
-                            var result = [];
-                            var tags = [];
-                            var contTags = [];
-                            var resultArray = Object.values(JSON.parse(JSON.stringify(rows)))
-                            if (resultArray.length != 0) {
-                                var suma = 1;
-                                var i;
-                                var ant = resultArray[0];
-                                for (let a = 0; a <= resultArray.length; a++) {
-                                    i = resultArray[a];
-                                    if (typeof i === 'undefined' || i.name != ant.name) {
-                                        //Calculo de puntuacion
-                                        suma += (ant.likes * 10 - ant.dislikes * 2);
-                                        if (suma <= 0)
-                                            suma = 1;
-                                        ant.score = suma;
-                                        delete ant.likes;
-                                        delete ant.dislikes;
-                                        suma = 1;
-
-                                        //Calculo de tag mas usado
-                                        if (typeof i === 'undefined') {
-                                            var index = tags.indexOf(ant.tag);
-                                            if (index == -1) {//nueva tag
-                                                tags.push(ant.tag);
-                                                contTags[tags.length - 1]++;
-                                            }
-                                            else {
-                                                contTags[index]++;
-                                            }
-                                        }
-                                        var max = 0;
-                                        var index = 0;
-                                        for (let j of contTags) {
-                                            if (j > max) {
-                                                max = j.cont;
-                                                index = contTags.indexOf(max);
-                                            }
-                                        }
-                                        ant.tag = tags[index];
-                                        tags = [];
-                                        result.push(ant);
+                            //scoreQuestion
+                            var map = new Map();
+                            for (let i of rows) {
+                                var o = new Object();
+                                o.score = 10 * i.qlikes - 2 * i.qdislikes + 1;
+                                if (o.score <= 0)
+                                    o.score = 1;
+                                o.id= i.id;
+                                o.img = i.img;
+                                o.name = i.name;
+                                map.set(i.id, o);
+                            }
+                            const sql = "SELECT DISTINCT u.id,u.name, u.img, SUM(a.likes) AS alikes, SUM(a.dislikes) AS adislikes FROM user u, answer a WHERE a.idUser = u.id GROUP BY u.id";
+                            connection.query(sql,
+                                function (err, rows2) {
+                                    if (err) {
+                                        connection.release(); // devolver al pool la conexión
+                                        callback(new Error("Error en el conteo de respuestas"));
                                     }
                                     else {
-                                        var index = tags.indexOf(i.tag);
-                                        if (index == -1) {//nueva tag
-                                            tags.push(i.tag);
-                                            contTags[tags.length - 1]++;
+                                        //scoreAnswer
+                                        for (let i of rows2) {
+                                            var a = map.get(i.id);
+                                            if (typeof a === 'undefined') {
+                                                var o = new Object();
+                                                o.score = 10 * i.alikes - 2 * i.adislikes + 1;
+                                                if (o.score <= 0)
+                                                    o.score = 1;
+                                                o.img = i.img;
+                                                o.name = i.name;
+                                                o.id=i.id;
+                                                map.set(i.id, o);
+                                            }
+                                            else {
+                                                a.score += 10 * i.alikes - 2 * i.adislikes;
+                                                map.set(i.id, a);
+
+                                                if (a.score <= 0)
+                                                    a.score = 1;
+                                            }
+
                                         }
-                                        else {
-                                            contTags[index]++;
-                                        }
+                                        const sql2 = "select distinct table1.id, tag FROM (SELECT user.id, tags.tag AS tag, count(*) as _count FROM user JOIN question ON user.id = question.idUser JOIN tags ON question.id = tags.idQuestion GROUP BY user.id, tags.tag) AS table1 GROUP BY table1.id ORDER BY table1.id, _count DESC";
+                                        connection.query(sql2,
+                                            function (err, rows3) {
+                                                if (err) {
+                                                    connection.release(); // devolver al pool la conexión
+                                                    callback(new Error("Error en el conteo de respuestas"));
+                                                }
+                                                else {
+                                                    //tagMasUSado
+                                                    for (let i of rows3) {
+                                                        var a = map.get(i.id);
+                                                        a.tag= i.tag;
+                                                        map.set(i.id, a);                                                    
+            
+                                                    }
+                                                    var resultArray = [];
+                                                    for (var [key, value] of map) {
+                                                        resultArray.push(value);
+                                                    }
+                                                    connection.release(); // devolver al pool la conexión
+                                                    callback(null, resultArray);
+                                                }
+                                            }
+                                        );
+                                       
                                     }
-                                    ant = i;
                                 }
-                            }
-                            connection.release(); // devolver al pool la conexión
-                            callback(null, result);
+                            );
                         }
-                    });
+                    }
+
+
+                );
             }
         });
     }
@@ -278,11 +293,26 @@ class DAOUsers {
                             callback(new Error("Error de acceso a la base de dato2s"));
                         }
                         else {
-                            let suma = 10 * rows[0].likes - 2 * rows[0].dislikes
-                            if (suma <= 0)
-                                suma = 1;
-                                connection.release(); // devolver al pool la conexión
-                            callback(null, suma);
+                            let suma = 10 * rows[0].likes - 2 * rows[0].dislikes + 1;
+
+                            const sql = "SELECT a.id, SUM(a.likes) AS likes, SUM(a.dislikes) AS dislikes FROM answer a WHERE a.idUser = ?";
+                            connection.query(sql, [id],
+                                function (err, rows2) {
+                                    if (err) {
+                                        connection.release(); // devolver al pool la conexión
+                                        callback(new Error("Error en el conteo de respuestas"));
+                                    }
+                                    else {
+                                        suma += 10 * rows2[0].likes - 2 * rows2[0].dislikes;
+                                        if (suma <= 0)
+                                            suma = 1;
+                                        connection.release(); // devolver al pool la conexión
+                                        callback(null, suma);
+                                    }
+                                }
+                            );
+
+
 
                         }
 
@@ -317,12 +347,12 @@ class DAOUsers {
                                 var o = new Object();
                                 o.description = i.description;
                                 o.cont = i.cont;
-                                if (i.type == "bronce") 
+                                if (i.type == "bronce")
                                     medalsResult.bronze.push(o);
-                                
-                                else if( i.type =="plata")
+
+                                else if (i.type == "plata")
                                     medalsResult.silver.push(o);
-                                
+
                                 else
                                     medalsResult.gold.push(o);
                             }
@@ -342,24 +372,24 @@ class DAOUsers {
             }
             else {
                 const sql = "SELECT * FROM user WHERE user.id = ?"
-                connection.query(sql, 
-                [id],
-                function(err, rows) {
-                    if (err) {
-                        connection.release(); // devolver al pool la conexión
-                        callback(new Error("Error en la base de datos 1"));
-                    }
-                    else {
-                        if(rows.length === 0) {
-                            connection.release();
-                            callback(new Error("Usuario no existente"));
+                connection.query(sql,
+                    [id],
+                    function (err, rows) {
+                        if (err) {
+                            connection.release(); // devolver al pool la conexión
+                            callback(new Error("Error en la base de datos 1"));
                         }
                         else {
-                            connection.release();
-                            callback(null);    
+                            if (rows.length === 0) {
+                                connection.release();
+                                callback(new Error("Usuario no existente"));
+                            }
+                            else {
+                                connection.release();
+                                callback(null);
+                            }
                         }
-                    }
-                });
+                    });
             }
         });
     }

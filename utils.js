@@ -29,6 +29,7 @@ class utils {
     }
 
     filterUserByName(users, str){
+        console.log(users);
         return users.filter(n => n.name.toLowerCase().includes(str.toLowerCase()));
     }
 
@@ -37,7 +38,7 @@ class utils {
         return questions.filter(o => o.tags.some(aux => tag.toLowerCase() == aux.toLowerCase()));
     }
     filterByText(questions, str){
-        return questions.filter(n => n.title.includes(str) || n.body.includes(str));
+        return questions.filter(n => n.title.toLowerCase().includes(str.toLowerCase()) || n.body.toLowerCase().includes(str.toLowerCase()));
     }
 }
 

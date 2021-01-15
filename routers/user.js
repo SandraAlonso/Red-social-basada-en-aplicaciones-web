@@ -15,5 +15,5 @@ router.route('/:id')
     .get(userController.getQAFromUser)
     .get(userController.getUserScore)
     .get(userController.getMedals)
-
+    
 module.exports = router;

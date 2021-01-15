@@ -229,6 +229,27 @@ class DAOQuestion {
                                 }
                             });
                         }
+                        else {
+                            const sql2 = "DELETE FROM votequestion WHERE idUser = ? AND idQuestion = ?";
+                            connection.query(sql2, [idUser, idQuestion],
+                            function (err) {
+                                if (err) {
+                                    connection.release();
+                                    callback(new Error("Error de acceso a la base de datos1"));
+                                }
+                                else {
+                                    let sql3;
+                                    if(value === 1) sql3 = "UPDATE question SET question.likes = question.likes - ? WHERE question.id = ?";
+                                    else sql3 = "UPDATE question SET question.dislikes = question.dislikes - ? WHERE question.id = ?";
+                                    connection.query(sql3, [Math.abs(value), idQuestion], function(err) {
+                                        if(err) {
+                                            connection.release(); // devolver al pool la conexión
+                                            callback(new Error("Error de acceso a la base de datos2"));
+                                        }
+                                    });
+                                }
+                            });
+                        }
                             connection.release(); // devolver al pool la conexión
                             callback(null);
                     }
@@ -315,6 +336,27 @@ class DAOQuestion {
                                     if(value === 1) sql3 = "UPDATE answer SET answer.likes = answer.likes + ?, answer.dislikes = answer.dislikes + ? WHERE answer.id = ?";
                                     else sql3 = "UPDATE answer SET answer.dislikes = answer.dislikes + ?, answer.likes = answer.likes + ? WHERE answer.id = ?";
                                     connection.query(sql3, [Math.abs(value), plus, idAnswer], function(err) {
+                                        if(err) {
+                                            connection.release(); // devolver al pool la conexión
+                                            callback(new Error("Error de acceso a la base de datos2"));
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                        else {
+                            const sql2 = "DELETE FROM voteanswer WHERE idUser = ? AND idAnswer = ?";
+                            connection.query(sql2, [idUser, idAnswer],
+                            function (err) {
+                                if (err) {
+                                    connection.release();
+                                    callback(new Error("Error de acceso a la base de datos1"));
+                                }
+                                else {
+                                    let sql3;
+                                    if(value === 1) sql3 = "UPDATE answer SET answer.likes = answer.likes - ? WHERE answer.id = ?";
+                                    else sql3 = "UPDATE answer SET answer.dislikes = answer.dislikes - ? WHERE answer.id = ?";
+                                    connection.query(sql3, [Math.abs(value), idAnswer], function(err) {
                                         if(err) {
                                             connection.release(); // devolver al pool la conexión
                                             callback(new Error("Error de acceso a la base de datos2"));
